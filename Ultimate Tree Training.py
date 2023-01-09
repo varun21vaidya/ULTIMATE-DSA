@@ -2,6 +2,7 @@
 
 # Tree Node
 from collections import deque
+from collections import defaultdict
 
 
 class Node():
@@ -57,6 +58,14 @@ node.right.left = Node(6)
 node.right.right = Node(7)
 node.right.right.left = Node(9)
 node.right.right.right = Node(10)
+
+
+# ip=[]
+# for i in range(len(ip)):
+#     if i==0:
+#         node=Node(ip[0])
+#     else:
+#         node=insert(node, ip[i])
 
 # Show Tree In Console
 print2D(node)
@@ -811,49 +820,233 @@ print2D(node)
 # print(verticalTraversal(node))
 
 
-# # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# #  # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-# # Boundry of Binary Tree:
+# # # Boundry of Binary Tree:
+# # # PROBLEM LINK:https://practice.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1
 
-def boundry(root):
+# def boundry(root):
 
-    def goleft(root):
-        if not root.left and not root.right:
-            return lefts
-        lefts.append(root.value)
-        if not root.left:
-            goleft(root.right)
-        goleft(root.left)
+#     def goleft(root):
+#         if not root.left and not root.right:
+#             return lefts
+#         lefts.append(root.value)
+#         if not root.left:
+#             goleft(root.right)
+#         goleft(root.left)
 
-    def leafnodes(root):
-        # inorder traversal as it gets leaf nodes from left to right correctly
-        if not root:
-            return
-        if not root.left and not root.right:
-            leafs.append(root.value)
-            return
+#     def leafnodes(root):
+#         # inorder traversal as it gets leaf nodes from left to right correctly
+#         if not root:
+#             return
+#         if not root.left and not root.right:
+#             leafs.append(root.value)
+#             return
 
-        leafnodes(root.left)
-        leafnodes(root.right)
+#         leafnodes(root.left)
+#         leafnodes(root.right)
 
-    def goright(root):
-        if not root.left and not root.right:
-            return rights
-        rights.append(root.value)
-        if not root.right:
-            goright(root.left)
-        goright(root.right)
+#     def goright(root):
+#         if not root.left and not root.right:
+#             return rights
+#         rights.append(root.value)
+#         if not root.right:
+#             goright(root.left)
+#         goright(root.right)
 
-    lefts, leafs, rights = [], [], []
-    goleft(root)
-    # print(lefts)
-    leafnodes(root)
-    # print(leafs)
-    goright(root)
-    # print(rights)
-    ans = lefts+leafs+rights[::-1]
-    return ans
+#     lefts, leafs, rights = [], [], []
+#     goleft(root)
+#     # print(lefts)
+#     leafnodes(root)
+#     # print(leafs)
+#     goright(root)
+#     # print(rights)
+#     ans = lefts+leafs+rights[::-1]
+#     ans.pop()  # remove last element which is root again from right
+#     return ans
 
 
-print("print boundry nodes of tree")
-print(boundry(node))
+# print("print boundry nodes of tree")
+# print(boundry(node))
+
+
+# #  # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# # # TOP VIEW OF BINARY TREE
+# # # PROBLEM LINK: https://practice.geeksforgeeks.org/problems/top-view-of-binary-tree/1?utm_source=gfg&utm_medium=article&utm_campaign=bottom_sticky_on_article
+
+
+# # # Recursive Approach:
+# # use dfs traversal and use a col and level variables that we used in vertical traversal
+# # but here we just need to print the outermost ie top level nodes from each col so store those col and level in mapp
+# # now traverse and check if that col in mapp and if its present from its values ie [level, root] check
+# # if level in mapp is greater than current level if its not then update col with current level and root
+
+# # here as we move downwards in the tree we will reduce level so it becomes easier to compare to get top level
+# # and at the end sort the mapp keys and return values
+
+
+# def TopViewQ(root):
+#     def topview(root,col,level):
+#         if not root: return
+
+#         if col in mapp:
+#             if level>=mapp[col][0]:
+#                 mapp[col]=[level,root.value]
+#         else:
+#             mapp[col]=[level,root.value]
+
+#         topview(root.left,col-1,level-1)
+#         topview(root.right,col+1,level-1)
+
+
+#     from collections import defaultdict
+#     mapp=defaultdict(list)
+#     topview(root,0,0)
+#     # print(mapp)
+
+#     return [mapp[x][1] for x in sorted(mapp)]
+
+# print("TOP VIEW OF BINARY TREE")
+# print(TopViewQ(node))
+
+# # # /////////////////////////////////////////////////////////////
+
+# # Iterative Appraoch:
+# # similar to dfs we just replace it with bfs
+
+
+# def TopViewQ(root):
+
+#     import collections
+#     mapp=collections.defaultdict(list)
+#     q=collections.deque([[root,0,0]])
+#     while q:
+#         for i in range(len(q)):
+#             temp,col,level=q.popleft()
+
+#             if temp.left:
+#                 q.append([temp.left,col-1,level-1])
+#             if temp.right:
+#                 q.append([temp.right,col+1,level-1])
+
+#             if col in mapp:
+#                 if level>=mapp[col][0]:
+#                     mapp[col]=[level,temp.value]
+#             else:
+#                 mapp[col]=[level,temp.value]
+
+#     # print(mapp)
+
+#     return [mapp[x][1] for x in sorted(mapp)]
+
+# print("TOP VIEW OF BINARY TREE")
+# print(TopViewQ(node))
+
+# # # FOR BOTTOM JUST change level-1 to level+1
+# # # so levels would be changed accordingly and highest level is bottom one is shown
+
+#  # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# # BINARY TREE RIGHT SIDE VIEW
+# # PROBLEM LINK: https://leetcode.com/problems/binary-tree-right-side-view/
+
+# def rightSideView(root):
+
+# # Iterative ie BFS: Intuitive
+# if not root: return
+# q=deque([root])
+# ans=[]
+# while q:
+#     for i in range(len(q)):
+#         temp=q.popleft()
+#         if temp.left:
+#             q.append(temp.left)
+#         if temp.right:
+#             q.append(temp.right)
+
+#     ans.append(temp.value)
+# return ans
+
+# # # ////////////////////////////////////////////////////////
+
+# Recursive ie DFS
+# take level variable and increase it with each subtree
+# and as we move we will store the level: root.value in mapp
+# now as we are moving first to left then to right
+# the last updated value for that level would be from right only
+# so just return the hashmap values in a list
+
+# def dfs(root, level):
+#     if not root:
+#         return
+
+#     mapp[level] = root.value
+
+#     dfs(root.left, level+1)
+#     dfs(root.right, level+1)
+
+# mapp = defaultdict(int)
+# dfs(root, 0)
+# # print(mapp)
+
+# return mapp.values()
+
+
+# # for left subtree just take right side traversal
+# # then left side traversal
+
+#     def dfs(root, level):
+#         if not root:
+#             return
+
+#         mapp[level] = root.value
+
+#         dfs(root.right, level+1)
+#         dfs(root.left, level+1)
+
+#     mapp = {}
+#     dfs(root, 0)
+#     # print(mapp)
+
+#     return mapp.values()
+
+
+# print("Print Right side view of Tree")
+# print(rightSideView(node))
+
+
+# # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# # SYMMETRIC TREES
+# # Problem LINK : https://leetcode.com/problems/symmetric-tree/
+
+
+# Explantiion:
+# Mirrored tree means for the root node
+# the left side will traverse with suppose root left right
+# while right subtree will traverse with root right left
+# and we have to traverse them at the same time
+# if one of the nodes is null, other has to be, if its not return False
+# both the nodes from left subtree and right subtree should be of same value to be symmetric
+
+def isSymmetric(root):
+
+    def solver(left, right):
+
+        if not left or not right:
+            return left == right
+
+        if left.value != right.value:
+            return False
+
+        return solver(left.left, right.right) and solver(left.right, right.left)
+
+    if not root:
+        return
+    return solver(root.left, root.right)
+
+
+print("check if Trees are symmetric or not")
+print(isSymmetric(node))
