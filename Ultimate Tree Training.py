@@ -60,12 +60,6 @@ node.right.right.left = Node(9)
 node.right.right.right = Node(10)
 
 
-# ip=[]
-# for i in range(len(ip)):
-#     if i==0:
-#         node=Node(ip[0])
-#     else:
-#         node=insert(node, ip[i])
 
 # Show Tree In Console
 print2D(node)
@@ -168,7 +162,7 @@ print2D(node)
 
 # # Explanation:
 # # to move iteratively we need to store the root nodes somewhere
-# # USE LILO ds ie stack to store left right nodes
+# # USE LIFO ds ie stack to store left right nodes
 # # Now as in preorder root left right, so when getting elements from stack
 # # we will need left first then right, so insert right first then left
 # # now suppose main root is inserted in stack, pop it and
@@ -1019,34 +1013,191 @@ print2D(node)
 # # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
-# # SYMMETRIC TREES
-# # Problem LINK : https://leetcode.com/problems/symmetric-tree/
+# # # SYMMETRIC TREES
+# # # Problem LINK : https://leetcode.com/problems/symmetric-tree/
 
 
-# Explantiion:
-# Mirrored tree means for the root node
-# the left side will traverse with suppose root left right
-# while right subtree will traverse with root right left
-# and we have to traverse them at the same time
-# if one of the nodes is null, other has to be, if its not return False
-# both the nodes from left subtree and right subtree should be of same value to be symmetric
+# # Explantiion:
+# # Mirrored tree means for the root node
+# # the left side will traverse with suppose root left right
+# # while right subtree will traverse with root right left
+# # and we have to traverse them at the same time
+# # if one of the nodes is null, other has to be, if its not return False
+# # both the nodes from left subtree and right subtree should be of same value to be symmetric
 
-def isSymmetric(root):
+# def isSymmetric(root):
 
-    def solver(left, right):
+#     def solver(left, right):
 
-        if not left or not right:
-            return left == right
+#         if not left or not right:
+#             return left == right
 
-        if left.value != right.value:
-            return False
+#         if left.value != right.value:
+#             return False
 
-        return solver(left.left, right.right) and solver(left.right, right.left)
+#         return solver(left.left, right.right) and solver(left.right, right.left)
 
-    if not root:
-        return
-    return solver(root.left, root.right)
+#     if not root:
+#         return
+#     return solver(root.left, root.right)
 
 
-print("check if Trees are symmetric or not")
-print(isSymmetric(node))
+# print("check if Trees are symmetric or not")
+# print(isSymmetric(node))
+
+
+# # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+# # # Path to Given Node
+# # # __________________
+
+# # Problem LINK: https://www.interviewbit.com/problems/path-to-given-node/
+
+# # Explanation:
+# # so first we will create a recursive function, and use it to traverse from left and then right and 
+# # then check if it meets the goal or not and store those nodes in between
+# # and if we observe that the further is deadend and we are returning without meeting goal 
+# # we remove such unnecessary nodes from our path
+
+# # Now first take the base condition, if root is Null return False
+# # and now append the node value to ans array
+# # and check if the root value is goal or not if we met goal return True
+# # then we will use boolean values for left and right traversal 
+# # if both of them are false both left and right traversals are useless
+# # so popout the last appended node
+# # but if any of them has met goal, that is correct path, so return True
+# # finally return the ans array path.
+
+# def path(A, B):
+           
+#     def solver(root, goal):
+#         if not root: return False
+        
+#         ans.append(root.value)
+        
+#         if root.value==goal:
+#             return True
+        
+#         a=solver(root.left,goal)
+#         b=solver(root.right,goal)
+        
+#         if not (a or b):
+#             ans.pop()
+#             return False
+#         else:
+#             return True
+    
+#     ans=[]       
+#     solver(A, B)
+#     return ans
+
+# print("Path to given Node 8")
+# print(path(node, 8))
+
+            
+# # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# # Lowest Common Ancester:
+
+# # problme LINK: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree
+
+
+#     # we will go to the path from root to each p and q
+#     # how will we do that, check this out
+#     # # Problem LINK: https://www.interviewbit.com/problems/path-to-given-node/
+
+#     # # Explanation:
+#     # # so first we will create a recursive function, and use it to traverse from left and then right and 
+#     # # then check if it meets the goal or not and store those nodes in between
+#     # # and if we observe that the further is deadend and we are returning without meeting goal 
+#     # # we remove such unnecessary nodes from our path
+
+#     # # Now first take the base condition, if root is Null return False
+#     # # and now append the node value to ans array
+#     # # and check if the root value is goal or not if we met goal return True
+#     # # then we will use boolean values for left and right traversal 
+#     # # if both of them are false both left and right traversals are useless
+#     # # so popout the last appended node
+#     # # but if any of them has met goal, that is correct path, so return True
+#     # # finally return the ans array path.
+    
+    
+#     # # now we got paths for q and q then from those paths we got that
+#     # # from root to some node both the paths were identical and at some point both saperated
+#     # # at this point is our common ancestor
+#     # # so we will traverse through both paths and check when they saperates ie their values differs
+#     # # so we will return node before that point
+
+#     # # But there are conditions like  a node to be a descendant of itself, in this case 
+#     # # one of the paths itself will end first so just return last node of that path
+
+# def LCA(root,p,q):
+
+#     def path(root,goal,ans):
+
+#         if not root: return False
+
+#         if root==goal:return True
+
+#         if path(root.left,goal,ans) or path(root.right,goal,ans)
+#             return True
+#         else:
+#             ans.pop()
+#             return False
+
+#     pathp,pathq=[],[]
+#     i,j=0,0
+#     while i<len(pathp) and j<len(pathq):
+#         if pathp[i]!=pathq[j]:
+#             return pathp[i-1]
+#         i+=1
+#         j+=1
+
+# #   # when one of i, or j reaches end it means its last element was common node
+
+#     if i==len(pathp): return pathp[-1]
+#     if j==len(pathq): return pathq[-1]
+
+    
+# # # ////////////////////////////////////////////////////////////////////////////
+
+# # # # IMPROVED VERSION - WITHOUT USING EXTRA SPACE
+
+# # like we traversed left and right nodes, we will traverse again
+# # but whenever we reach one of p or q, we will return that p or q
+# # else we will return a null if we reach null
+# # and at each node we will check if the returned node is null or p or q
+# # if any one of them is null return other ie if left is null return right
+# # now even if right is also null, we anyway had to return null
+# # but if right has value of p or q, it will return that
+# # now if left has value and right is null, return left
+# # but if both of them has value then we have got the solution node
+# # so return that node
+
+# # But there are conditions like a node to be a descendant of itself, in this case 
+# # suppose there is root node 3 on left there is 4 and right of it is 5-->6 and 
+# # we had to find for 5 , 6 only, then from left 4 is not one of them, returns null
+# # on right we got 5 which is one of them, so returns 5, and 3 will return 5 only
+# # so if you observe, the code returns first occured p or q , and it will be LCA only.
+
+
+# def DCA(root, p, q):
+#     def solver(root):
+#         # if not root: return root # # ie return Null
+#         # if root==p: return p
+#         # if root==q: return q
+#         # # instead we can just combine them
+        
+#         if not root or root==p or root==q:
+#             return root
+        
+#         left=solver(root.left)
+#         right=solver(root.right)
+        
+#         if not left: return right
+#         elif not right: return left
+#         else:
+#             return root
+        
+#     return solver(root)
