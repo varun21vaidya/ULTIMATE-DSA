@@ -60,9 +60,8 @@ node.right.right.left = Node(9)
 node.right.right.right = Node(10)
 
 
-
 # Show Tree In Console
-print2D(node)
+# print2D(node)
 
 
 ###########################  Traversals    #######################################
@@ -1055,47 +1054,47 @@ print2D(node)
 # # Problem LINK: https://www.interviewbit.com/problems/path-to-given-node/
 
 # # Explanation:
-# # so first we will create a recursive function, and use it to traverse from left and then right and 
+# # so first we will create a recursive function, and use it to traverse from left and then right and
 # # then check if it meets the goal or not and store those nodes in between
-# # and if we observe that the further is deadend and we are returning without meeting goal 
+# # and if we observe that the further is deadend and we are returning without meeting goal
 # # we remove such unnecessary nodes from our path
 
 # # Now first take the base condition, if root is Null return False
 # # and now append the node value to ans array
 # # and check if the root value is goal or not if we met goal return True
-# # then we will use boolean values for left and right traversal 
+# # then we will use boolean values for left and right traversal
 # # if both of them are false both left and right traversals are useless
 # # so popout the last appended node
 # # but if any of them has met goal, that is correct path, so return True
 # # finally return the ans array path.
 
 # def path(A, B):
-           
+
 #     def solver(root, goal):
 #         if not root: return False
-        
+
 #         ans.append(root.value)
-        
+
 #         if root.value==goal:
 #             return True
-        
+
 #         a=solver(root.left,goal)
 #         b=solver(root.right,goal)
-        
+
 #         if not (a or b):
 #             ans.pop()
 #             return False
 #         else:
 #             return True
-    
-#     ans=[]       
+
+#     ans=[]
 #     solver(A, B)
 #     return ans
 
 # print("Path to given Node 8")
 # print(path(node, 8))
 
-            
+
 # # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 # # Lowest Common Ancester:
@@ -1108,28 +1107,28 @@ print2D(node)
 #     # # Problem LINK: https://www.interviewbit.com/problems/path-to-given-node/
 
 #     # # Explanation:
-#     # # so first we will create a recursive function, and use it to traverse from left and then right and 
+#     # # so first we will create a recursive function, and use it to traverse from left and then right and
 #     # # then check if it meets the goal or not and store those nodes in between
-#     # # and if we observe that the further is deadend and we are returning without meeting goal 
+#     # # and if we observe that the further is deadend and we are returning without meeting goal
 #     # # we remove such unnecessary nodes from our path
 
 #     # # Now first take the base condition, if root is Null return False
 #     # # and now append the node value to ans array
 #     # # and check if the root value is goal or not if we met goal return True
-#     # # then we will use boolean values for left and right traversal 
+#     # # then we will use boolean values for left and right traversal
 #     # # if both of them are false both left and right traversals are useless
 #     # # so popout the last appended node
 #     # # but if any of them has met goal, that is correct path, so return True
 #     # # finally return the ans array path.
-    
-    
+
+
 #     # # now we got paths for q and q then from those paths we got that
 #     # # from root to some node both the paths were identical and at some point both saperated
 #     # # at this point is our common ancestor
 #     # # so we will traverse through both paths and check when they saperates ie their values differs
 #     # # so we will return node before that point
 
-#     # # But there are conditions like  a node to be a descendant of itself, in this case 
+#     # # But there are conditions like  a node to be a descendant of itself, in this case
 #     # # one of the paths itself will end first so just return last node of that path
 
 # def LCA(root,p,q):
@@ -1159,7 +1158,7 @@ print2D(node)
 #     if i==len(pathp): return pathp[-1]
 #     if j==len(pathq): return pathq[-1]
 
-    
+
 # # # ////////////////////////////////////////////////////////////////////////////
 
 # # # # IMPROVED VERSION - WITHOUT USING EXTRA SPACE
@@ -1175,8 +1174,8 @@ print2D(node)
 # # but if both of them has value then we have got the solution node
 # # so return that node
 
-# # But there are conditions like a node to be a descendant of itself, in this case 
-# # suppose there is root node 3 on left there is 4 and right of it is 5-->6 and 
+# # But there are conditions like a node to be a descendant of itself, in this case
+# # suppose there is root node 3 on left there is 4 and right of it is 5-->6 and
 # # we had to find for 5 , 6 only, then from left 4 is not one of them, returns null
 # # on right we got 5 which is one of them, so returns 5, and 3 will return 5 only
 # # so if you observe, the code returns first occured p or q , and it will be LCA only.
@@ -1188,16 +1187,211 @@ print2D(node)
 #         # if root==p: return p
 #         # if root==q: return q
 #         # # instead we can just combine them
-        
+
 #         if not root or root==p or root==q:
 #             return root
-        
+
 #         left=solver(root.left)
 #         right=solver(root.right)
-        
+
 #         if not left: return right
 #         elif not right: return left
 #         else:
 #             return root
-        
+
 #     return solver(root)
+
+
+# # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# # # All nodes distance from K:
+
+# # # PROBLEM LINK: https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/
+
+# def distanceK(root, target, k):
+
+#     def addmap(root,parent):
+#             if not root: return
+
+#             mapp[root]=parent
+#             addmap(root.left,root)
+#             addmap(root.right,root)
+#     mapp=defaultdict(int)
+#     addmap(root,None)
+
+
+#     # # USING DFS:
+
+#     def solver(root,dist):
+#         if not root or root in visited :return
+
+#         visited.add(root)
+#         if dist==k:
+#             res.append(root.value)
+#             return
+
+#         solver(root.left,dist+1)
+#         solver(root.right,dist+1)
+#         solver(mapp[root],dist+1)
+
+#     res=[]
+#     visited=set()
+#     solver(target,0)
+#     return res
+
+# #     # # USING BFS:
+
+# #     q=deque([[target,0]])
+# #     visited=set()
+# #     visited.add(target)
+# #     while q:
+# #         # print("tree",[(node.val,d) for node, d in q])
+# #         if q[0][1]==k: return [node.value for node, d in q]
+
+# #         temp,dist= q.popleft()
+# #         for node in (temp.left,temp.right,mapp[temp]):
+# #             if node and node not in visited:
+# #                 visited.add(node)
+# #                 q.append([node,dist+1])
+# #         # print("visited",[x.val for x in visited])
+
+# #     return []
+
+# print("All nodes distance from K")
+# k=2
+# print(distanceK(node,node,2))
+
+
+# # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# # # Problem Link: https://practice.geeksforgeeks.org/problems/burning-tree/1?utm_source=gfg&utm_medium=article&utm_campaign=bottom_sticky_on_article
+
+
+# def minTime(root, target):
+#     # code here
+#     def getparent(root, parent):
+#         if not root:
+#             return
+
+#         parents[root] = parent
+
+#         getparent(root.left, root)
+#         getparent(root.right, root)
+
+#     import collections
+#     parents = collections.defaultdict(int)
+#     getparent(root, None)
+
+#     visited = {target}
+#     res = 0
+#     goal = root
+
+#     def gettotarget(root):
+#         if not root:
+#             return
+#         if root.value == target:
+#             nonlocal goal
+#             goal = root
+#         gettotarget(root.left)
+#         gettotarget(root.right)
+
+#     gettotarget(root)
+
+#     q = collections.deque([[goal, res]])
+#     while q:
+#         res = q[0][1]
+#         node, dist = q.popleft()
+#         for temp in (node.left, node.right, parents[node]):
+#             if temp and temp.value not in visited:
+#                 visited.add(temp.value)
+#                 q.append([temp, dist+1])
+#     return res
+
+
+# print("Burning Tree")
+# print(minTime(node, 8))
+
+
+# # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# # Construct a Binary Tree from Inorder and Preorder
+
+# # Problem Link: https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal
+
+# def construct(preorder,inorder):
+
+#     # # Explantion:
+#     # # 1. inorder means left root right
+#     # # 2. preorder means root left right
+#     # # 3. so preorder will take the root but it cant get how many
+#     # #     elements are in its left node or right node
+#     # # 4. so thats where inorder comes, it gives elements to its left and
+#     # #     right , so take the element from preorder, find its index in
+#     # #     inorder
+#     # # 5. and assign the left and right subtrees to with new preorder and
+#     # #     inorder with size of index
+#     # # 6. for left inorder would be elements on its left ie 0 to ind
+#     # #     and for preorder add that index apart from currnt index 1:ind+1
+#     # # 7. for right, inorder would be right side elements of that index
+#     # #     ie ind+1 to end
+#     # #     and for preorder again from index +1 to end
+#     # # 8. finally return the newly created node with left and right
+#     # #       subtrees
+
+#     # def builder(preorder,inorder):
+#     #     if not preorder or not inorder:
+#     #         return
+#     #     tr=Node(preorder[0])
+#     #     ind= inorder.index(preorder[0])
+
+#     #     tr.left= builder(preorder[1:ind+1],inorder[:ind])
+#     #     tr.right= builder(preorder[ind+1:],inorder[ind+1:])
+
+#     #     return tr
+#     # return builder(preorder,inorder)
+
+
+#     # # # /////////////////////////////////////////////////////////////////
+
+#     # Improving the Solution:
+
+#     # Now instead of using heavy operations by creating new list everytime
+#     # we will just take indexes and arrange them to get the same effect of
+#     # creating the new list, ie make prestart,preend,instart,inend variables
+
+#     # Now to improve finding index each time just use hashmap to store all the
+#     # index of inorder nodes, ie for creting node, take prestart
+#     # ie starting index of prestart and get its index from map.
+
+#     # now when we calculate index get, remaining numbers from starting of inorder to index
+#     # ie that index - starting index of inorder naming it remain
+
+#     # now for left and right nodes,
+#     # left: for prestart+1 ie next of current node to prestart+remain, take that many elements from left
+#     # and for inorder, take from starting of inorder upto index calculated ie instart to getind-1
+#     # right: for starting of preorder + number of elements on left to end of preorder
+#     # for inorder, from next of current index to end of inorder.
+
+#     def build(preorder,prestart,preend,inorder,instart,inend):
+#         if prestart>preend and instart>inend:
+#             return
+#         tr=Node(preorder[prestart])
+#         getind= mapp[preorder[prestart]]
+#         remain= getind-instart
+#         tr.left= build(preorder,prestart+1,prestart+remain,inorder,instart,getind-1)
+#         tr.right=build(preorder,prestart+remain+1, preend,inorder, getind+1, inend)
+
+#         return tr
+
+#     mapp=dict()
+#     for i in range(len(inorder)):
+#         mapp[inorder[i]]=i
+
+#     return build(preorder,0,len(preorder)-1,inorder,0,len(inorder)-1)
+
+
+# print("Construct a Binary Tree from Inorder and Preorder")
+# preorder=[3,9,20,15,7]
+# inorder=[9,3,15,20,7]
+# x=construct(preorder,inorder)
+# print2D(x)
