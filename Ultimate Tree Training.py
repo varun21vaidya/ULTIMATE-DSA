@@ -61,7 +61,7 @@ node.right.right.right = Node(10)
 
 
 # Show Tree In Console
-# print2D(node)
+print2D(node)
 
 
 ###########################  Traversals    #######################################
@@ -1395,3 +1395,52 @@ node.right.right.right = Node(10)
 # inorder=[9,3,15,20,7]
 # x=construct(preorder,inorder)
 # print2D(x)
+
+
+# # # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# # Morris Traversal: Iterative INORDER in O(1) Space:
+
+def Morris(root):
+
+    curr = root
+    while curr != None:
+        if curr.left:
+
+            new = curr.left
+
+            # first go to next left
+            # then go to its rightmost element and check
+            # 1.if new.right is not pointing to current element
+            # ie if it is then we have already traversed here
+            # 2. if its first time in this node, run loop until
+            # it reaches null, traverse to rightmost position
+            # 3. after that check if there was link previously,
+            # if there was, go to right subtree of current
+            # ie covered left subtree
+            # 4. else if its first time, go into left subtree and
+            # also make that link from rightmost to current parent node
+
+            while new.right != curr and new.right != None:
+                new = new.right
+
+            # we had already traversed here, print and go to right subtree
+            if new.right == curr:
+                new.right=None
+                print(curr.value, end=" ")
+                curr = curr.right
+
+            else: # curr is null ie first time here
+                new.right = curr
+                curr = curr.left
+
+        else:
+            # if we reached left deadend, print current node and move right
+            print(curr.value, end=" ")
+            # res.append(curr.val)
+            curr = curr.right
+
+
+res = []
+print("The morris Traversal is")
+Morris(node)
