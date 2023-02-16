@@ -363,3 +363,333 @@
 
 # arr=[1,4]
 # print(minDifference(arr,len(arr)))
+
+
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # COUNT THE NUMBER OF SUBSET WITH GIVEN DIFFERENCE:
+# # PROBLEM LINK: https://leetcode.com/problems/target-sum
+
+# def TargetSum(nums, target):
+
+# def solver(n,w,count):
+
+#     if n==0:
+#         x=(w-(W-w))
+#         if x==target:
+#             count+=1
+#         return count
+
+#     if nums[n-1]<=w:
+#         count=solver(n-1,w-nums[n-1],count)+solver(n-1,w,count)
+#     else:
+#         count=solver(n-1,w,count)
+
+#     return count
+
+# w=W=sum(nums)
+# return solver(len(nums),w,0)
+
+# def solver(n,w,count):
+
+#     if n==0:
+#         if w==0:
+#             count+=1
+#         return count
+
+#     if nums[n-1]<=w:
+#         count=solver(n-1,w-nums[n-1],count)+solver(n-1,w,count)
+#     else:
+#         count=solver(n-1,w,count)
+
+#     return count
+
+# n=len(nums)
+
+# # edge case for 1 element in array
+# Consider a an input -> [100] and target = -100. For this
+# we need to take care that our sum is always less that absolute value of target.
+# if n==1:
+#     if abs(nums[0])==abs(target):
+#         return 1
+#     else:
+#         return 0
+
+# # s1 s2 - sum of subset 1 and sum of subset 2
+# # s1+s2=sum(nums)=w
+# # s1-s2=target
+# # 2s1=w+target
+# # s1=(w+target)//2
+# # now we just have to find if any subset matches s1 sum
+# # rest is same as count of subset sum ie if we replace w with s1
+
+# # 2s1=w+target and s1=(w+target)//2, so s1 should be even number
+# # if its odd num return 0
+# s1= (sum(nums)+target)
+# if s1%2!=0: return 0
+
+# return solver(n,s1//2,0)
+
+# # BOTTOM UP APPROACH:
+
+# # s1 s2 - sum of subset 1 and sum of subset 2
+# # s1+s2=sum(nums)=w
+# # s1-s2=target
+# # 2s1=w+target
+# # s1=(w+target)//2
+# # now we just have to find if any subset matches s1 sum
+# # rest is same as count of subset sum ie if we replace w with s1
+
+# s1= (sum(nums)+target)
+# Consider a an input -> [100] and target = -100. For this
+# we need to take care that our sum is not less than 0.
+# if s1%2!=0 or s1<0: return 0
+# s1//=2
+# n=len(nums)
+# dp= [[0 for _ in range(s1+1)] for _ in range(n+1)]
+# dp[0][0]=1
+# # j starts from 0, becuase 0s are considered valid in this problem, e.g - nums: [0,0,0,0], target: 0, ans = 16
+# for i in range(1,n+1):
+#     for j in range(0,s1+1):
+
+#         if nums[i-1]<=j:
+#             dp[i][j]=dp[i-1][j-nums[i-1]]+dp[i-1][j]
+#         else:
+#             dp[i][j]=dp[i-1][j]
+
+#     return dp[n][s1]
+
+# nums = [1, 1, 2, 3]
+# target = 1
+# print(TargetSum(nums, target))
+
+
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # Unbounded Knapsack:
+# # PROBLEM STATEMENT: https://practice.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1
+
+# def unboundedKnapsack(n,w,val,wt):
+
+    # for unbounded knapsack Here we can take same element
+    # for number of times but if we reject it, it will not be
+    # asked again, ie like 01 knapsack not take condition remains same
+    # ie to repeat if we want to pick 
+    # dp[i][j-wt[i-1]] notice instead of dp[i-1] its just dp[i]
+    # so that it can be picked again and again.
+        
+    # def solver(n,w):
+    #     if n==0 or w==0:
+    #         return 0
+    #     if wt[n-1]<=w:
+    #         return max(val[n-1]+solver(n, w - wt[n-1]), solver(n-1,w))
+    #     else:
+    #         return solver(n-1,w)
+    
+    # return solver(n,w)
+
+
+    # # Recurison + Memoization
+    # def solver(n,w):
+    #     if n==0 or w==0:
+    #         return 0
+    #     if dp[n][w]:
+    #         return dp[n][w]
+    #     if wt[n-1]<=w:
+    #         dp[n][w]= max(val[n-1]+solver(n,w-wt[n-1]), solver(n-1,w))
+    #     else:
+    #         dp[n][w]= solver(n-1,w)
+        
+    #     return dp[n][w]
+    # dp=[[0 for _ in range(w+1)] for _ in range(n+1)]
+    # return solver(n,w)
+
+
+    # # # Bottom Up Approach:
+    # dp=[[0 for _ in range(w+1)] for _ in range(n+1)]
+    # for i in range(n+1):
+    #     for j in range(w+1):
+    #         if i==0 or j==0:
+    #             dp[i][j]=0
+    #         elif wt[i-1]<=j:
+    #             dp[i][j]= max(val[i-1]+dp[i][j-wt[i-1]], dp[i-1][j])
+    #         else:
+    #             dp[i][j]=dp[i-1][j]
+            
+    # return dp[n][w]
+
+# val=[1,1]
+# wt=[2,1]
+# n=2
+# w=3
+# print(unboundedKnapsack(n,w,val,wt)) # output:3
+
+
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # Rod Cutting Problem:
+# # PROBLEM LINK: https://practice.geeksforgeeks.org/problems/rod-cutting0840/1?utm_source=gfg&utm_medium=article&utm_campaign=bottom_sticky_on_article
+
+# EXPLANATION: 
+# ROD CUTTING PROBLEM IS EXACT SIMILAR TO UNBOUNDED KNAPSACK
+# JUST WE DONT HAVE GIVEN wt ARRAY THAT WE HAVE TO FIGURE OUT HOW TO GET.
+# # just observe that like knapsack value array here is price array, and N as constant ie weight
+# # and we are asked max profit 
+# # now we need a array which will be compared with N, ie we need rod lengths
+# # from which we will take prices, so create a length array 
+
+# def rodCutting(N,price):
+#     # # Recurison + Memoization
+#     # def solver(n,w):
+#     #     if n==0 or w==0:
+#     #         return 0
+#     #     if dp[n][w]:
+#     #         return dp[n][w]
+#     #     if length[n-1]<=w:
+#     #         dp[n][w]= max(price[n-1]+solver(n,w-length[n-1]), solver(n-1,w))
+#     #     else:
+#     #         dp[n][w]= solver(n-1,w)
+        
+#     #     return dp[n][w]
+    
+#     # length=[i for i in range(1, N+1)]
+#     # dp=[[0 for _ in range(N+1)] for _  in range(N+1)]
+#     # return solver(N,N)
+
+
+#     # # Bottom UP Approach:
+    
+#     dp=[[0 for _ in range(N+1)] for _ in range(N+1)]
+#     for i in range(N+1):
+#         for j in range(N+1):
+#             if i==0 or j==0:
+#                 dp[i][j]=0
+#             elif i<=j:
+#                 dp[i][j]=max(price[i-1]+dp[i][j - i],dp[i-1][j])
+#             else:
+#                 dp[i][j]=dp[i-1][j]
+                
+#     return dp[N][N]
+
+# N=8
+# price=[1,5,8,9,10,17,17,20]
+# print(rodCutting(N,price)) #op:22
+
+# N=8
+# price=[3, 5, 8, 9, 10, 17, 17, 20]
+# print(rodCutting(N,price)) # op:24
+
+
+# # # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # Coin Change
+# # Problem Link: https://leetcode.com/problems/coin-change
+
+# def coinChange(coins, amount):
+
+    # # # RECURSIVE SOLUTION:
+
+    # def solver(n,w,count):
+    #     # if sum is 0 and we have some coins, we dont need any of them
+    #     # and if w==0 and n==0 then also we dont have coins and dont need them
+    #     if w==0:
+    #         return 0
+
+    #     # *****if we need amount 5 and we have empty jar, how can we give them any amount
+    #     # we would need infinite coins to get 5 amount from empty ie impossible
+    #     # therefor for empty jar ie n==0 return infinity
+
+    #     if n==0:
+    #         return float('inf')
+        
+    #     if coins[n-1]<=w:
+    #         count= min(1+solver(n,w-coins[n-1],count),solver(n-1,w,count))
+    #     else:
+    #         count= solver(n-1,w,count)
+        
+    #     return count
+
+    # x=solver(len(coins), amount,0)
+    # if x==float('inf'):
+    #     return -1
+    # else:
+    #     return x
+
+
+    # # # Memoization:
+
+    # def solver(n,w,dp):
+    #     # if sum is 0 and we have some coins, we dont need any of them
+    #     # and if w==0 and n==0 then also we dont have coins and dont need them
+    #     if w==0:
+    #         return 0
+
+    #     # *****if we need amount 5 and we have empty jar, how can we give them any amount
+    #     # we would need infinite coins to get 5 amount from empty ie impossible
+    #     # therefor for empty jar ie n==0 return infinity
+    #     if n==0:
+    #         return float('inf')
+
+    #     if dp[n][w]!=amount+1:
+    #         return dp[n][w]
+        
+    #     elif coins[n-1]<=w:
+    #         dp[n][w]=min(1+ solver(n,w-coins[n-1],dp), solver(n-1,w,dp))
+    #     else:
+    #         dp[n][w]=solver(n-1,w,dp)
+
+    #     return dp[n][w]
+
+    # n=len(coins)
+    # # # we can use amount +1 for initialization as indicator to max value which 
+    # # # does not interfere with float('inf') of n==0
+    # dp=[[amount+1 for _ in range(amount+1)] for _ in range(n+1)]
+    # x=solver(n,amount,dp)
+    # if x!=float('inf'):
+    #     return x
+    # else:
+    #     return -1
+
+
+
+    # # Bottom Up Approach:
+
+    # n=len(coins)
+    # dp=[[float('inf') for _ in range(amount+1)] for _ in range(n+1)]
+
+    # if amount==0: return 0  
+    # for i in range(n+1):
+    #     for j in range(amount+1):
+    #         if i==0:
+    #             dp[i][j]=float('inf')
+    #         if j==0:
+    #             dp[i][j]=0
+    #         elif coins[i-1]<=j:
+    #             dp[i][j]=min(1+dp[i][j-coins[i-1]],dp[i-1][j])
+    #         else:
+    #             dp[i][j]= dp[i-1][j]
+    # if dp[n][amount]!=float('inf'):
+    #     return dp[n][amount]
+    # else:
+    #     return -1
+
+
+    # # Space Optimized to 1D array
+    # # we can also use 
+#     dp=[float('inf')]* (amount+1)
+#     dp[0]=0
+#     for i in range(len(coins)+1):
+#         for j in range(amount+1):
+#             if coins[i-1]<=j:
+#                 dp[j]=min(dp[j] ,1+dp[j-coins[i-1]])
+    
+#     return dp[amount] if dp[amount]!=float('inf') else -1
+
+# coins=[1,2,5]
+# amount=11
+# print(coinChange(coins,amount)) # op:3
+
+# coins=[2]
+# amount=3
+# print(coinChange(coins,amount)) # op:-1
+
