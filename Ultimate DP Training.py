@@ -693,3 +693,298 @@
 # amount=3
 # print(coinChange(coins,amount)) # op:-1
 
+
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # COIN CHANGE 2 (COUNT THE NUMBER OF WAYS)
+# # PROBLEM LINK: 
+
+# def coinschange2(coins,amount):
+
+#     # recursion:
+
+#     # def solver(n,w,ways):
+#     #     if n==0:
+#     #         return 0
+#     #     if w==0:
+#     #         return 1
+#     #     if coins[n-1]<=w:
+#     #         ways=solver(n, w- coins[n-1],ways)+solver(n-1,w,ways)
+#     #     else:
+#     #         ways=solver(n-1,w,ways)
+        
+#     #     return ways
+    
+#     # return solver(len(coins), amount,0)
+
+
+
+      # # MEMOIZATION:
+
+#     # def solver(n,w,dp):
+#     #     if n==0:
+#     #         return 0
+#     #     if w==0:
+#     #         return 1
+
+#     #     if dp[n][w]!=-1:
+#     #         return dp[n][w]
+#     #     if coins[n-1]<=w:
+#     #         dp[n][w]=solver(n, w- coins[n-1],dp)+solver(n-1,w,dp)
+#     #     else:
+#     #         dp[n][w]=solver(n-1,w,dp)
+        
+#     #     return dp[n][w]
+    
+#     # dp=[[-1 for _ in range(amount+1)] for _ in range(len(coins)+1)]
+#     # return solver(len(coins), amount,dp)
+
+
+
+
+#     # # Bottom UP with improved space complexity
+
+#     dp=[0]*(amount+1)
+#     dp[0]=1
+#     for i in range(1,len(coins)+1):
+#         for j in range(1,(amount)+1):
+#             if coins[i-1]<=j:
+#                 dp[j]=dp[j]+dp[j-coins[i-1]]
+
+#     return dp[-1]
+
+# coins=[1,2,5]
+# amount=5
+# # op= 5, 2+2+1, 2+1+1+1, 1+1+1+1+1 ==> 4
+# print(coinschange2(coins,amount))
+
+# coins=[2]
+# amount=3
+# # op= 0
+# print(coinschange2(coins,amount))
+
+
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # MINIMUM COST FOR TICKETS:
+
+# # PROBLEM LINK: https://leetcode.com/problems/minimum-cost-for-tickets/
+
+
+# def mincostTickets(self, days,costs):
+
+#     # # RECURSIVE:
+
+#     # first we need to understand is, we need to calculate all paths for 
+#     # day 1 pass, day 7 pass and day 30 pass, now once we get that 
+#     # we need to increase the index
+#     # now if we take 7 day pass or 30 day pass, we will do one time pay
+#     # and for rest 6 days or 29 days we dont need, so increase index by that days
+#     # and for that keep a maxdays variable 
+#     # now after calculating all those for 1 day, 7 day and 30 day
+#     # just return min of them 
+
+
+#     # def solver(i,maxdays):
+#     #     if i>=len(days):
+#     #         return 0
+        
+#     #     if days[i]<=maxdays:
+#     #         return solver(i+1, maxdays)
+
+#     #     day1=costs[0]+solver(i+1,days[i]+0)
+#     #     day7=costs[1]+solver(i+1,days[i]+6)
+#     #     day30=costs[2]+solver(i+1,days[i]+29)
+
+#     #     return min(day1,day7,day30)
+    
+#     # return solver(0,0)
+
+
+
+#     # # MEMOIZATION
+
+#     # def solver(i,maxdays):
+#     #     if i>=len(days):
+#     #         return 0
+        
+#     #     if days[i]<=maxdays:
+#     #         return solver(i+1, maxdays)
+
+#     #     if dp[i]!=0:
+#     #         return dp[i]
+
+#     #     day1=costs[0]+solver(i+1,days[i]+0)
+#     #     day7=costs[1]+solver(i+1,days[i]+6)
+#     #     day30=costs[2]+solver(i+1,days[i]+29)
+
+#     #     dp[i]= min(day1,day7,day30)
+#     #     return dp[i]
+    
+#     # dp=[0 for i in range(len(days))]
+#     # return solver(0,0)
+
+
+#     # # Bottom Up Appoach: 
+
+#     # the max days we need to keep track is 365 days so 
+#     # either we can use max dp size of last day of array or 365
+#     # now we will take a range from first day to last day or 365 day of days array
+#     # and in that there will be days which are not present in array for those
+#     # just consider previous value and continue
+
+#     # for rest which are present we need to calculate 1day pass value, 7 day and 30 day
+#     # now for total cost of that pass = cost of travel before x days 
+#     #                                   + cost of travel of x days
+#     # ie for 1 day pass = dp[i-1]+ costs[0]
+#     # for 7 day pass = dp[i-7]+ costs[0]
+#     # for 30 day pass = dp[i-30]+ costs[0]
+#     # but as we are starting from 1 there will be i-1 =0 but for i-7 and i-30
+#     # that value will not be present hence we will check if its present 
+#     # and if not then we will consider it as 0
+
+#     # finally take the min of all of them and return ans
+
+#     dp=[0 for i in range(days[-1]+1)]
+#     daysset=set(days)
+#     for i in range(1,days[-1]+1):
+#         if i not in daysset:
+#             dp[i]=dp[i-1]
+#         else:
+#             day1=costs[0]+dp[i-1]
+#             day7=costs[1]+dp[max(0, i-7)]
+#             day30=costs[2]+dp[max(0,i-30)]
+
+#             dp[i]=min(day1,day7,day30)
+
+#     return dp[-1]
+
+
+# # # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # Largest Common Subsequence
+# # Problem Link: https://practice.geeksforgeeks.org/problems/longest-common-subsequence-1587115620/1?utm_source=gfg&utm_medium=article&utm_campaign=bottom_sticky_on_article
+#Function to find the length of longest common subsequence in two strings.
+
+
+# def lcs(x,y,s1,s2):
+    
+#     # def solver(x,y):
+#     #     if x==0 or y==0:
+#     #         return 0
+        
+#     #     if s1[x-1] == s2[y-1]:
+#     #         return 1+ solver(x-1,y-1)
+        
+#     #     return max(solver(x,y-1), solver(x-1,y))
+    
+#     # return solver(x,y)
+    
+#     # # # -------------------------------------
+    
+    # def solver(x,y):
+    #     if x==0 or y==0:
+    #         return 0
+    
+    #     if dp[x][y]!=-1:
+    #         return dp[x][y]
+            
+    #     if s1[x-1] == s2[y-1]:
+    #         dp[x][y]= 1+ solver(x-1,y-1)
+            
+    #     else:
+    #         dp[x][y]= max(solver(x,y-1), solver(x-1,y))
+            
+    #     return dp[x][y]
+    
+    # dp=[[-1 for _ in range(y+1)] for _ in range(x+1)]
+    # return solver(x,y)
+
+#     # # --------------------------------------
+    
+#     dp=[[0 for _ in range(y+1)] for _ in range(x+1)]
+#     for i in range(x+1):
+#         for j in range(y+1):
+#             if i==0 or j==0:
+#                 dp[i][j]=0
+#             elif s1[i-1] == s2[j-1]:
+#                 dp[i][j]= 1+ dp[i-1][j-1]
+#             else:
+#                 dp[i][j]= max(dp[i-1][j],dp[i][j-1])
+        
+#     return dp[x][y]
+
+# A = 6
+# B = 6
+# str1 = 'ABCDGH'
+# str2 = 'AEDFHR'
+# print(lcs(A,B,str1,str2)) # # op : 3
+
+
+# # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# # PRINTING LONGEST COMMON SUBSEQUENCE:
+
+# def printLCS(text1, text2):
+    
+    
+#     # # For printing LCS: 
+    
+# #         # recursive
+# #         def solver(x,y,temp):
+# #             if  x==0 or y==0:
+# #                 return ""
+        
+# #             if text1[x-1]==text2[y-1]:
+# #                 temp=text1[x-1]+ solver(x-1, y-1,temp)
+# #                 return temp
+        
+# #             a=solver(x, y-1,temp)
+# #             b=solver(x-1, y,temp)
+# #             temp= max(a,b,key=len)
+# #             return temp
+        
+# #         temp=""
+# #         res=solver(len(text1),len(text2),temp) 
+# #         return (res)
+
+#     # Memoization:
+    
+#     # def solver(x,y):
+#     #     if x==0 or y==0:
+#     #         return ""
+        
+#     #     if dp[x][y]!="":
+#     #         return dp[x][y]
+        
+#     #     if text1[x-1]==text2[y-1]:
+#     #         dp[x][y]= text1[x-1]+solver(x-1,y-1)
+#     #     else:
+#     #         dp[x][y]= max(solver(x,y-1),solver(x-1,y),key=len)
+            
+#     #     return dp[x][y]
+    
+#     # dp=[["" for _ in range(len(text2)+1)] for _ in range(len(text1)+1)]
+#     # res=solver(len(text1),len(text2))
+
+#     # return((res))
+
+
+#     # Tabulation:
+#     dp=[["" for _ in range(len(text2)+1)] for _ in range(len(text1)+1)]
+#     x,y=len(text1),len(text2)
+#     for i in range(x+1):
+#         for j in range(y+1):
+#             if i==0 or j==0:
+#                 dp[i][j]=""
+#             elif text1[i-1]==text2[j-1]:
+#                 dp[i][j]=text1[i-1]+ dp[i-1][j-1]
+#             else:
+#                 dp[i][j]=max(dp[i-1][j],dp[i][j-1],key=len)
+#     res=dp[x][y]
+    
+#     return (res)
+
+# str1 = 'ABCDGH'
+# str2 = 'AEDFHR'
+# print(printLCS(str1,str2)[::-1]) # # op ==> ADH

@@ -1,0 +1,303 @@
+from collections import deque
+
+
+class Solution:
+
+    # Function to return Breadth First Traversal of given graph.
+
+    # SC: O(3N) ~ O(N) ie N (at max N nodes we are visiting) + N for visited + N for queue
+    # TC: O(N)+ O(2E) = N number of iterations, for each node we are adding it to queue only once
+    # + 2E means total number of edges it connected ie all edges, for directed only E
+    # ie at each node we are getting summation of its degree ie number of neighbours ie edges which is E.
+
+    def bfsOfGraph(self, V, adj):
+        # code here
+        bfs = []
+        q = deque([0])
+        vis = set()
+        vis.add(0)
+
+        while q:
+            elem = q.popleft()
+            bfs.append(elem)
+
+            for item in adj[elem]:
+                if item not in vis:
+                    vis.add(item)
+                    q.append(item)
+
+        return bfs
+
+# --------------------------------------------------------------------------------
+
+    # function to return DFS traversal of graph
+    # SC: O(3N) ~ O(N) ie N (at max N nodes we are visiting) + N for visited set + recursion stack space
+    # TC: O(N)+ O(2E) = N number of iterations, for each node we are calling recursion only once
+    # + 2E means total number of edges it connected ie all edges, for directed only E
+    # ie at each node we are getting summation of its degree ie number of neighbours ie edges which is E.
+
+    def dfsOfGraph(self, V, adj):
+        # code here
+        def solver(elem):
+            bfs.append(elem)
+            vis.add(elem)
+            for item in adj[elem]:
+                if item not in vis:
+                    solver(item)
+
+            return bfs
+
+        bfs = []
+        vis = set()
+        return solver(0)
+
+# --------------------------------------------------------------------------------
+
+    # Rotten Tomatoes
+    # https://practice.geeksforgeeks.org/problems/rotten-oranges2536/1
+
+    def rottenTomatoes(self, grid):
+        # we need to use BFS
+        time = 0
+        visited = dict()
+        q = deque([])
+        fresh = 0
+        m = len(grid)
+        n = len(grid[0])
+
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 2:
+                    q.append([(i, j), time])
+                    visited[(i, j)] = 2
+
+                else:
+                    visited[(i, j)] = 0
+
+                if grid[i][j] == 1:
+                    fresh += 1
+
+        # BFS
+
+        # 0 1 2
+        # 0 1 2
+        # 2 1 1
+        drow = [-1, 0, 1, 0]
+        dcol = [0, 1, 0, -1]
+        while q:
+            [(i, j), t] = q.popleft()
+            time = max(time, t)
+
+            for d in range(4):
+                row, col = i+drow[d], j+dcol[d]
+
+                if row >= 0 and row < m and col >= 0 and col < n:
+                    if grid[row][col] == 1 and visited[(row, col)] == 0:
+                        visited[(row, col)] = 2
+                        q.append([(row, col), time+1])
+                        fresh -= 1
+
+        if fresh > 0:
+            return -1
+        return time
+
+# --------------------------------------------------------------------------------
+
+    # # Detect A Cycle
+    # # Problem Link: https://practice.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1
+
+    # # BFS: level order traversal
+    # # Traverse from different directions and if we reach a node
+    # # which is already visited, its a cycle
+
+    def isCycleBFS(self, V, adj):
+
+        # for handling various components, use a function
+        # for detecting a component has cycle or not
+        # so even if one component has cycle, graph has cycle
+
+        def detectCycle(src):
+            q = deque([])
+            q.append((src, -1))
+            vis.add(src)
+            while q:
+                elem, source = q.popleft()
+
+                for item in adj[elem]:
+
+                    # move only if item is not source
+                    # ie dont return to where you came from
+                    if item != source:
+
+                        # if item is in vis, we have already
+                        # visited this item by some other direction
+                        # ie this is part of cycle, return True
+                        if item in vis:
+                            return True
+
+                        q.append((item, elem))
+                        vis.add(item)
+            return False
+
+        # for checking all components we need to traverse through
+        # all elements in V range
+        vis = set()
+        for i in range(V):
+            if i not in vis:
+                if detectCycle(i):
+                    return True
+        return False
+
+    # # DFS:
+    # # SC: O(N) it stores atmost N nodes with visited set plus recursion stack space
+    # # TC: O(N+2E)+ O(N) traverses all nodes and edges and a for loop
+    def isCycleDFS(self, V, adj):
+
+        def dfs(elem, src):
+            vis.add(elem)
+            # traverse thourgh elem adj list
+            for item in adj[elem]:
+                if item != src:
+
+                    # if item is vis, and its not source,
+                    # it must be part of cycle
+                    if item in vis:
+                        return True
+
+                    else:
+                        # if next iteration returns true,
+                        # return True for all previous calls
+                        if dfs(item, elem):
+                            return True
+            return False
+
+        # for checking all components we need to traverse through
+        # all elements in V range
+        vis = set()
+        for i in range(V):
+            if i not in vis:
+                if dfs(i, -1):
+                    return True
+        return False
+
+# --------------------------------------------------------------------------------
+
+    # Number of Provinces
+    # https://practice.geeksforgeeks.org/problems/number-of-provinces/1
+
+    # so we need to traverse through the matrix and find the number of non connected items
+    # we will use dfs for this
+    def numProvinces(self, adj):
+
+        def dfs(i):
+            vis.add(i)
+
+            for x in range(len(adj[i])):
+                if x not in vis and adj[i][x] == 1:
+                    dfs(x)
+
+        vis = set()
+        count = 0  # to count number of non connected provinces
+        for i in range(len(adj)):
+            if i not in vis:
+                dfs(i)
+                count += 1
+
+        return count
+
+
+# --------------------------------------------------------------------------------
+
+    # # Number of Islands:
+    # # https://practice.geeksforgeeks.org/problems/find-the-number-of-islands/1
+
+    def numIslands(self, grid):
+        def bfs(i, j, vis):
+            vis.add((i, j))
+            q = deque([])
+            q.append((i, j))
+
+            drow = [-1, -1, 0, 1, 1, 1, 0, -1]
+            dcol = [0, 1, 1, 1, 0, -1, -1, -1]
+            m = len(grid)
+            n = len(grid[0])
+
+            while q:
+                i, j = q.popleft()  # O(1)
+
+                for d in range(8):
+                    row, col = i+drow[d], j+dcol[d]
+
+                    if row >= 0 and row < m and col >= 0 and col < n:
+                        if (row, col) not in vis and grid[row][col] == 1:
+                            q.append((row, col))
+                            vis.add((row, col))
+
+        m = len(grid)
+        n = len(grid[0])
+        vis = set()  # visited set
+        count = 0  # number of islands
+        for i in range(m):
+            for j in range(n):
+                if (i, j) not in vis and grid[i][j] == 1:
+                    bfs(i, j, vis)
+                    count += 1
+
+        return count
+
+# --------------------------------------------------------------------------------
+
+    # NUMBER OF DISTINCT ISLANDS:
+    # https://practice.geeksforgeeks.org/problems/number-of-distinct-islands/1
+
+    def distinctIslands(self, grid):
+
+        def dfs(i, j, temp, basei, basej):
+
+            vis.add((i, j))
+            temp.append((basei-i, basej-j))
+
+            drow = [-1, 0, 1, 0]
+            dcol = [0, 1, 0, -1]
+            m = len(grid)
+            n = len(grid[0])
+
+            for d in range(4):
+                row, col = i+drow[d], j+dcol[d]
+
+                if row >= 0 and row < m and col < n and col >= 0:
+                    if grid[row][col] == 1 and (row, col) not in vis:
+                        dfs(row, col, temp, basei, basej)
+
+        vis = set()
+        m = len(grid)
+        n = len(grid[0])
+        count = 0
+        distinct = set()
+
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 1 and (i, j) not in vis:
+                    temp = []
+                    dfs(i, j, temp, i, j)
+                    distinct.add(tuple(temp))
+                    count += 1
+
+        return len(distinct)
+
+
+V = 4
+adj = [[1, 2, 3], [], [4], [], []]
+
+ans = Solution()
+
+
+# for BFS TRAVERSAL
+# print(ans.bfsOfGraph(V, adj))  # [0, 1, 2, 3, 4]
+# print(ans.dfsOfGraph(V, adj))  # [0, 1, 2, 4, 3]
+# print(ans.rottenTomatoes([[2, 2, 0, 1]]))
+# print(ans.rottenTomatoes([[0, 1, 2], [0, 1, 2], [2, 1, 1]]))
+# print(ans.isCycleBFS(V,adj))
+# print(ans.numProvinces([[1, 0, 1], [0, 1, 0], [1, 0, 1]]))
+# print(ans.distinctIslands(
+#     [[1, 1, 0, 1, 1], [1, 0, 0, 0, 0], [0, 0, 0, 0, 1], [1, 1, 0, 1, 1]]))
