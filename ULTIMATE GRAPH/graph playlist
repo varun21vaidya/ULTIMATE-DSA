@@ -285,8 +285,13 @@ class Solution:
 
         return len(distinct)
 
+
+# --------------------------------------------------------------------------------
+
     # # Flood Fill Algorithm
     # # https://practice.geeksforgeeks.org/problems/flood-fill-algorithm1856/1
+
+    # TC : N*M || SC: N*M
 
     def floodFill(self, image, sr, sc, newColor):
 
@@ -305,27 +310,27 @@ class Solution:
                 if row >= 0 and col >= 0 and row < m and col < n and clone[row][col] == fillPoint and (row, col) not in vis:
                     dfs(row, col, vis, clone, newclr, fillPoint)
 
-        def bfs(i,j,vis,clone,newclr,fillPoint):
+        def bfs(i, j, vis, clone, newclr, fillPoint):
 
-            vis.add((i,j))
-            clone[i][j]=newclr
+            vis.add((i, j))
+            clone[i][j] = newclr
 
-            drow=[-1,0,1,0]
-            dcol=[0,1,0,-1]
+            drow = [-1, 0, 1, 0]
+            dcol = [0, 1, 0, -1]
 
-            q=deque()
-            q.append((i,j))
+            q = deque()
+            q.append((i, j))
 
             while q:
-                r,c= q.popleft()
+                r, c = q.popleft()
 
                 for d in range(4):
-                    row,col=drow[d]+r,dcol[d]+c
+                    row, col = drow[d]+r, dcol[d]+c
 
-                    if row>=0 and row<m and col>=0 and col<n and clone[row][col]==fillPoint and (row,col) not in vis:
-                        q.append((row,col))
-                        vis.add((row,col))
-                        clone[row][col]=newclr
+                    if row >= 0 and row < m and col >= 0 and col < n and clone[row][col] == fillPoint and (row, col) not in vis:
+                        q.append((row, col))
+                        vis.add((row, col))
+                        clone[row][col] = newclr
 
         # Notice the line that the points that we need to change should be same as starting point
         # ideally we should not change given input, so we use clone
@@ -336,11 +341,55 @@ class Solution:
 
         # only these values will be changed with newColor
         fillPoint = image[sr][sc]
-        
+
         # dfs(sr, sc, vis, clone, newColor, fillPoint)
         bfs(sr, sc, vis, clone, newColor, fillPoint)
 
         print("clone")
+        return clone
+
+    # # distance of nearest cell from 0 / 0-1 Matrix:
+    # # https://leetcode.com/problems/01-matrix/
+
+    # we will solve this using bfs as it represents at each step we move distance 1
+
+    # 3 things needed, clone array for output distance, vis set to track , queue for bfs
+
+    # Initially we will find 0s we will add it to que so all that all 0s would be added to q
+    # now we will traverse in bfs for each one at a step, so for each step,
+    # if there is 1 occured its distance would be added. and we store this distance
+    # in the que itself, to track previous distances and append to it. as we are moving stepwise with each element
+    # the distance would be shortest only.
+
+    def ZeroOneMatrix(self, mat):
+        m = len(mat)
+        n = len(mat[0])
+
+        clone = [[float('inf')]*n for x in range(m)]
+        vis = set()
+        q = deque()
+
+        for i in range(m):
+            for j in range(n):
+                if mat[i][j] == 0:
+                    vis.add((i, j))
+                    q.append((i, j, 0))
+
+        drow = [-1, 0, 1, 0]
+        dcol = [0, 1, 0, -1]
+        while q:
+            r, c, dist = q.popleft()
+            clone[r][c] = dist
+
+            for d in range(4):
+                row, col = drow[d]+r, dcol[d]+c
+
+                if row >= 0 and row < m and col >= 0 and col < n:
+                    if (row, col) not in vis and mat[row][col] == 1:
+                        q.append((row, col, dist+1))
+                        vis.add((row, col))
+                        clone[row][col] = dist+1
+
         return clone
 
 
@@ -359,4 +408,5 @@ ans = Solution()
 # print(ans.numProvinces([[1, 0, 1], [0, 1, 0], [1, 0, 1]]))
 # print(ans.distinctIslands(
 #     [[1, 1, 0, 1, 1], [1, 0, 0, 0, 0], [0, 0, 0, 0, 1], [1, 1, 0, 1, 1]]))
-print(ans.floodFill([[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2))
+# print(ans.floodFill([[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2))
+print(ans.ZeroOneMatrix([[0, 0, 0], [0, 1, 0], [1, 1, 1]]))
