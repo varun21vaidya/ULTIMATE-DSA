@@ -39,15 +39,15 @@ class Solution:
     def dfsOfGraph(self, V, adj):
         # code here
         def solver(elem):
-            bfs.append(elem)
+            dfs.append(elem)
             vis.add(elem)
             for item in adj[elem]:
                 if item not in vis:
                     solver(item)
 
-            return bfs
+            return dfs
 
-        bfs = []
+        dfs = []
         vis = set()
         return solver(0)
 
@@ -211,6 +211,7 @@ class Solution:
     # # Number of Islands:
     # # https://practice.geeksforgeeks.org/problems/find-the-number-of-islands/1
 
+
     def numIslands(self, grid):
         def bfs(i, j, vis):
             vis.add((i, j))
@@ -292,6 +293,7 @@ class Solution:
     # # https://practice.geeksforgeeks.org/problems/flood-fill-algorithm1856/1
 
     # TC : N*M || SC: N*M
+
 
     def floodFill(self, image, sr, sc, newColor):
 
@@ -392,9 +394,106 @@ class Solution:
 
         return clone
 
+    # # Replace O's with X's
+    # # https://practice.geeksforgeeks.org/problems/replace-os-with-xs0052/1
+
+    # now first we need to understand the problem, which states that we need to find
+    # the "O"s which are fully surrounded by "X" now it also means we need to skip
+    # those "O"s which are on boundry, so from our Jugaad we will find Ulta Solution
+    # we will find the "O"s on the boundry store them in visited and then convert those
+    # "O"s which are not in visited set.
+
+    def fillOwithX(self, mat):
+        drow = [-1, 0, 1, 0]
+        dcol = [0, 1, 0, -1]
+        m = len(mat)
+        n = len(mat[0])
+        vis = set()
+
+        # dfs which traverses from boundry and marks those Os which are adjecent to boundry
+        # ie these are not eligible to converted
+        def dfs(r, c, vis):
+            vis.add((r, c))
+            for d in range(4):
+                row, col = drow[d]+i, dcol[d]+j
+
+                if row >= 0 and row < m and col >= 0 and col < n and (row, col) not in vis and mat[row][col] == "O":
+                    dfs(row, col, vis)
+
+        # traveres throgh matrix but only fetch boundry elements and finds "O"s on boundry and uses dfs on them
+        for i in range(m):
+            for j in range(n):
+                # only traverse through boundry and find the "O"s
+                if i == 0 or i == m-1 or j == 0 or j == n-1:
+                    if mat[i][j] == "O":
+                        dfs(i, j, vis)
+
+        # when we got all non eligible marked with vis set, again traverse and convert those Os which are not in vis
+        for i in range(m):
+            for j in range(n):
+                if mat[i][j] == "O" and (i, j) not in vis:
+                    mat[i][j] = "X"
+
+        return mat
+
+    # # Bipertite Graph:
+    # # https://practice.geeksforgeeks.org/problems/bipartite-graph/1
+
+    # Bipertite graph is a graph with 2 colors such that no two adjecent nodes have same color
+
+    def bipertite(self, V, adj):
+
+        def bfs(start):
+
+            q = deque()
+            q.append(start)
+
+            while q:
+                node = q.popleft()
+
+                for item in adj[node]:
+
+                    if color[item] == -1:
+                        color[item] = not color[node]
+                        q.append(item)
+
+                    elif color[item] == color[node]:
+                        return False
+
+            return True
+
+        def dfs(node, clr):
+            color[node] = clr
+
+            for item in adj[node]:
+                if color[item] == -1:
+                    if not dfs(item, not clr):
+                        return False
+
+                elif color[item] == color[node]:
+                    return False
+
+            return True
+
+        # define a color array to maintain the track of colors of each node
+        # if two adjecent nodes have same color return False
+        color = [-1]*V
+
+        # to handle multiple components we use a for loop and traversal.
+        # if any node has -1 its not traversed yet so run traversal through it.
+
+        for i in range(V):
+            if color[i] == -1:
+                # if not bfs(i): return False
+                if not dfs(i, 0):
+                    return False
+
+        return True
+
 
 V = 4
 adj = [[1, 2, 3], [], [4], [], []]
+
 
 ans = Solution()
 
@@ -409,4 +508,10 @@ ans = Solution()
 # print(ans.distinctIslands(
 #     [[1, 1, 0, 1, 1], [1, 0, 0, 0, 0], [0, 0, 0, 0, 1], [1, 1, 0, 1, 1]]))
 # print(ans.floodFill([[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2))
-print(ans.ZeroOneMatrix([[0, 0, 0], [0, 1, 0], [1, 1, 1]]))
+# print(ans.ZeroOneMatrix([[0, 0, 0], [0, 1, 0], [1, 1, 1]]))
+# print(ans.fillOwithX(mat=[["X", "X", "X", "X"], [
+#       "X", "O", "X", "X"],["X", "O", "O", "X"], [
+#       "X", "O", "X", "X"], [ "X", "X", "O", "O"]]))
+
+
+print(ans.bipertite(4, [[2, 3], [3], [0, 3], [0, 1]]))  # False
