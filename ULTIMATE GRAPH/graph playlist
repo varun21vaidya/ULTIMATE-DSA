@@ -211,7 +211,6 @@ class Solution:
     # # Number of Islands:
     # # https://practice.geeksforgeeks.org/problems/find-the-number-of-islands/1
 
-
     def numIslands(self, grid):
         def bfs(i, j, vis):
             vis.add((i, j))
@@ -293,7 +292,6 @@ class Solution:
     # # https://practice.geeksforgeeks.org/problems/flood-fill-algorithm1856/1
 
     # TC : N*M || SC: N*M
-
 
     def floodFill(self, image, sr, sc, newColor):
 
@@ -490,8 +488,159 @@ class Solution:
 
         return True
 
+    # # Dectect a Cycle for Directed Graph
+    # # https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
 
-V = 4
+    def detectCycleDirected(self, V, adj):
+
+        # to find if graph has cycle or not for undirected we have used to just check if it was visited or not
+        # but for directed we also need to check if its on the same path or not as for directed path changes by direction of nodes
+        # so make a marking system for just visited but not on same path and on same path
+        # so in visited array create
+        # for visited but not on same path = 1
+        # for visited and on same path = 2
+
+        # Initially when we are traversing and found a node we will mark it as 2 as we are continuing on same path
+        # but when we got out of that path ie no node to move forward we return, so while returning we will leave that path, so convert it to 1
+        # now when we came across a that node with value 1 from another direction, we can say as it was another direction because we were not on
+        # same path as its 1 , so its not a cycle
+        # but if that node had value as 2 we would be on same path so its a cycle
+
+        def dfs(node):
+            vis[node] = 2
+
+            for item in adj[node]:
+
+                # if new item is occured traverse again, and when completed check if its True, and return True
+                if vis[item] == 0:
+                    if dfs(item):
+                        return True
+
+                # if item is on same path: return True its a cycle
+                if vis[item] == 2:
+                    return True
+
+                # if vis[item] is 1 it will not be a cycle and anyway we are returning False at the end
+
+            # when loop completes node backtracks so it leaves current path, so convert it to 1
+            vis[node] = 1
+            return False
+
+        vis = [0]*V
+        for i in range(V):
+
+            if vis[i] == 0:
+                # if cycle detected quickly return True
+                if dfs(i):
+                    return True
+
+        return False
+
+
+# ---------------------------------------------------------------------------------------------------------
+
+    # # Eventual Safe States
+    # # https://practice.geeksforgeeks.org/problems/eventual-safe-states/1
+
+    # so first of all we need to find terminal nodes ie nodes which does not have outer direction
+    # and for every else element when all or only path from this element to terminal node is there, this element is safe node
+    # we need to find all such safe node, NOTE: a terminal node is also a safe node
+    # now if there is a cycle in graph there is another route which offcourse cannot reach terminal node, so we need to
+    # eliminate those nodes which are in cycle and supporting this cycle
+    # now how to detect cycle we know we can store a visited array which indicates if node is visited or not and if visited
+    # it is in same path or different path if same path its part of cycle.
+    # vis states:
+    # 0 : unvisited
+    # 1 : visited but different path
+    # 2 : visited and same path
+
+    # at the end all eleements in cycle would have been marked as 2 and rest with 1 and we can return those as safe nodes
+
+    def safeStates(self, V, adj):
+
+        def dfsCycle(node):
+            vis[node] = 2  # we are continuing same path
+
+            for item in adj[node]:
+
+                # if item is unvisited, traverse dfs and check if its cycle by checking if it returns true
+                if vis[item] == 0:
+                    if dfsCycle(item):
+                        return True
+
+                # if vis[item] is 2 ie its on same path as node then both are in cycle
+                if vis[item] == 2:
+                    return True
+
+            # rest that reach here are not part of cycle
+            vis[node] = 1
+            return False
+
+        vis = [0]*V
+        safenodes = []
+
+        for i in range(V):
+            if vis[i] == 0:
+                dfsCycle(i)
+        print(vis)
+        for i in range(V):
+            if vis[i] == 1:
+                safenodes.append(i)
+
+        return safenodes
+
+    # ---------------------------------------------
+
+    # # Topological Sort:
+
+    # # https://practice.geeksforgeeks.org/problems/topological-sort/1
+
+    # # What is topological Sort:
+    # # Its a linear ordering of vertices such that if there is link between u and v, u will appear first before v
+    # # eg. take this adjecent matrix
+    # # 0 []
+    # # 1 []
+    # # 2 [3]
+    # # 3 [1]
+    # # 4 [0,1]
+    # # 5 [0 2]
+    # # then 5 is directed towards 0 and 2 so it will appear before 0 and 2 in sorted order likewise 4 before 0,1
+    # # 3 before 1, 2 before 3
+    # # so it will be -->   5 4 2 3 1 0     or    4 5 2 3 1 0
+
+    # # ITS ONLY APPLICABLE FOR DAG--> Directed Acyclic Graph
+
+    # # APPRAOACH:
+    # # we will traverse each vertices as nodes, now each node will traverse in its neighbours, now when it completes
+    # # that node will be added to stack
+    # # for eg. 2 will have neighbour 3 so dfs(3) will be called and 1 will already be visited, so now loop of 3 will be completed of all neighbours
+    # # and then it will be added to stack then neighbour loop of 2 will be completed and it will be added to stack.
+
+    def TopologicalSort(self, V, adj):
+        def dfs(node, vis, stack):
+            vis.add(node)
+
+            for item in adj[node]:
+                if item not in vis:
+                    dfs(item, vis, stack)
+
+            stack.append(node)
+
+        vis = set()
+        stack = []
+
+        for i in range(V):
+            if i not in vis:
+                dfs(i, vis, stack)
+
+        res = []
+        for i in range(V):
+            res.append(stack.pop())
+
+        return res
+
+
+V = 5
 adj = [[1, 2, 3], [], [4], [], []]
 
 
@@ -514,4 +663,12 @@ ans = Solution()
 #       "X", "O", "X", "X"], [ "X", "X", "O", "O"]]))
 
 
-print(ans.bipertite(4, [[2, 3], [3], [0, 3], [0, 1]]))  # False
+# print(ans.bipertite(4, [[2, 3], [3], [0, 3], [0, 1]]))  # False
+# print(ans.detectCycleDirected(4,
+#                               [[0, 1],
+#                                [1, 2],
+#                                   [2, 3],
+#                                   [3, 0], ]))  # True
+
+# print(ans.safeStates(4,[[0, 1],[1, 2],[2, 0],[2,3],[3, 3]]))
+print(ans.TopologicalSort(V, adj))
