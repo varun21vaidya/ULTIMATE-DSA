@@ -491,8 +491,6 @@ class Solution:
     # # Dectect a Cycle for Directed Graph
     # # https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
 
-    def detectCycleDirected(self, V, adj):
-
         # to find if graph has cycle or not for undirected we have used to just check if it was visited or not
         # but for directed we also need to check if its on the same path or not as for directed path changes by direction of nodes
         # so make a marking system for just visited but not on same path and on same path
@@ -505,6 +503,8 @@ class Solution:
         # now when we came across a that node with value 1 from another direction, we can say as it was another direction because we were not on
         # same path as its 1 , so its not a cycle
         # but if that node had value as 2 we would be on same path so its a cycle
+
+    def detectCycleDirected(self, V, adj):
 
         def dfs(node):
             vis[node] = 2
@@ -536,58 +536,42 @@ class Solution:
 
         return False
 
+    # --------------------------------------
 
-# ---------------------------------------------------------------------------------------------------------
+        # #  BFS METHOD: KAHN's Algorithm
 
-    # # Eventual Safe States
-    # # https://practice.geeksforgeeks.org/problems/eventual-safe-states/1
+        # we know that kahn's algo is based for Topological sort
+        # so its only for DAG: directed acyclic graph
+        # if we apply it on cyclic graph, it wouldnot complete it
+        # so just perform it and check if its length is same as V, then its not cycle
+        # if its length is not equal to V then its a cycle
 
-    # so first of all we need to find terminal nodes ie nodes which does not have outer direction
-    # and for every else element when all or only path from this element to terminal node is there, this element is safe node
-    # we need to find all such safe node, NOTE: a terminal node is also a safe node
-    # now if there is a cycle in graph there is another route which offcourse cannot reach terminal node, so we need to
-    # eliminate those nodes which are in cycle and supporting this cycle
-    # now how to detect cycle we know we can store a visited array which indicates if node is visited or not and if visited
-    # it is in same path or different path if same path its part of cycle.
-    # vis states:
-    # 0 : unvisited
-    # 1 : visited but different path
-    # 2 : visited and same path
+    def detectCycleDirectedBFS(self, V, adj):
 
-    # at the end all eleements in cycle would have been marked as 2 and rest with 1 and we can return those as safe nodes
+        indegree = [0]*V
 
-    def safeStates(self, V, adj):
+        # populate the indegree array
+        for v in range(V):
+            for item in adj[v]:
+                indegree[item] += 1
 
-        def dfsCycle(node):
-            vis[node] = 2  # we are continuing same path
+        q = deque()
+        topoCount = 0
 
+        for v in range(V):
+            if indegree[v] == 0:
+                q.append(v)
+                topoCount += 1
+
+        while q:
+            node = q.popleft()
             for item in adj[node]:
+                indegree[item] -= 1
+                if indegree[item] == 0:
+                    q.append(item)
+                    topoCount += 1
 
-                # if item is unvisited, traverse dfs and check if its cycle by checking if it returns true
-                if vis[item] == 0:
-                    if dfsCycle(item):
-                        return True
-
-                # if vis[item] is 2 ie its on same path as node then both are in cycle
-                if vis[item] == 2:
-                    return True
-
-            # rest that reach here are not part of cycle
-            vis[node] = 1
-            return False
-
-        vis = [0]*V
-        safenodes = []
-
-        for i in range(V):
-            if vis[i] == 0:
-                dfsCycle(i)
-        print(vis)
-        for i in range(V):
-            if vis[i] == 1:
-                safenodes.append(i)
-
-        return safenodes
+        return topoCount != V
 
     # ---------------------------------------------
 
@@ -639,6 +623,280 @@ class Solution:
 
         return res
 
+    # -----------------------------------------------------------------------
+
+    # # KAHN's Algorithm (TOPOLOGICAL SORT BFS)
+
+    # Approach:
+    # bfs means a queue is necessary. Now to get the topological sort with BFS we need an Indegrees Array.
+    # Indegree of vertices means the number of inward/incoming directions of that vertices.
+
+    # Now how it works:
+    # First calculate the number of each incoming vertices and store them in array
+    # now take only zero indegree vertices and add them to queue, and also to result.
+
+    # Now perform a BFS traversal with popping each vertices from queue and then traverse through all of its neighbours
+    # now when we visit each neighbour, its indegree will be reduced as indication that we have visited this item.
+    # now when its indegree will become zero, add it to queue and result
+
+    # The resultant array would be in topological sort.
+
+    def topoLogicalSortBFS(self, V, adj):
+
+        # first create indegree array
+        indegree = [0]*V
+
+        for v in range(V):
+            for item in adj[v]:
+                indegree[item] += 1
+
+        # create queue and resultant array
+        q = deque()
+        res = []
+
+        # first we need to add zero based indegree vertices to queue and result
+        for v in range(V):
+            if indegree[v] == 0:
+                q.append(v)
+                res.append(v)
+
+        while q:
+            node = q.popleft()
+
+            for item in adj[node]:
+                indegree[item] -= 1
+                if indegree[item] == 0:
+                    q.append(item)
+                    res.append(item)
+
+        return res
+
+
+# ---------------------------------------------------------------------------------------------------------
+
+    # # Eventual Safe States
+
+    # # https://practice.geeksforgeeks.org/problems/eventual-safe-states/1
+
+    # so first of all we need to find terminal nodes ie nodes which does not have outer direction
+    # and for every else element when all or only path from this element to terminal node is there, this element is safe node
+    # we need to find all such safe node, NOTE: a terminal node is also a safe node
+    # now if there is a cycle in graph there is another route which offcourse cannot reach terminal node, so we need to
+    # eliminate those nodes which are in cycle and supporting this cycle
+    # now how to detect cycle we know we can store a visited array which indicates if node is visited or not and if visited
+    # it is in same path or different path if same path its part of cycle.
+    # vis states:
+    # 0 : unvisited
+    # 1 : visited but different path
+    # 2 : visited and same path
+
+    # at the end all eleements in cycle would have been marked as 2 and rest with 1 and we can return those as safe nodes
+
+    # Note : gives TLE, for last 3 cases. USE BFS
+
+    def safeStatesDFS(self, V, adj):
+
+        def dfsCycle(node):
+            vis[node] = 2  # we are continuing same path
+
+            for item in adj[node]:
+
+                # if item is unvisited, traverse dfs and check if its cycle by checking if it returns true
+                if vis[item] == 0:
+                    if dfsCycle(item):
+                        return True
+
+                # if vis[item] is 2 ie its on same path as node then both are in cycle
+                if vis[item] == 2:
+                    return True
+
+            # rest that reach here are not part of cycle
+            vis[node] = 1
+            return False
+
+        vis = [0]*V
+        safenodes = []
+
+        for i in range(V):
+            if vis[i] == 0:
+                dfsCycle(i)
+        print(vis)
+        for i in range(V):
+            if vis[i] == 1:
+                safenodes.append(i)
+
+        return safenodes
+
+    # # BFS
+    # SO for BFS, we can see we have terminal nodes with no outer edge, and also there might be isCycleBFS
+    # now if we try to use Kahns algorithm on this, we might include those vertices as indegree that support cycle as safe nodes
+    # as they have only outer nodes, but they are not as they are attached to cycle.
+    # So we will reverse direction of all edges so terminal nodes with all incoming nodes will become all outgoing nodes
+    # ie will become vertices with indegree = 0, and we can use Kahns algo here as it will remove those vertices supporting the cycle
+
+    def safeStatesBFS(self, V, adj):
+
+        revadj = [[]for _ in range(V)]
+        indegree = [0]*V
+        for v in range(V):
+            for item in adj[v]:
+                revadj[item].append(v)
+                indegree[v] += 1
+
+        q = deque()
+        res = []
+        for v in range(V):
+            if indegree[v] == 0:
+                q.append(v)
+
+        while q:
+            node = q.popleft()
+            res.append(node)
+
+            for item in revadj[node]:
+                indegree[item] -= 1
+                if indegree[item] == 0:
+                    q.append(item)
+
+        res.sort()
+        return res
+
+# # -------------------------------------------------------------------------------------------------
+
+#     Alien Dictionary
+#     https://practice.geeksforgeeks.org/problems/alien-dictionary/1
+
+    def AlienDictionary(self,N,K,alien_dict):
+
+        # if you observe that we have to decode the alien dictionary
+        # by comparing with our letters, first K letters of our alphabetes are to be used
+        # now when you observe [baa, abcd, abca ] you can tell that b should be before a , d before a like this pairs
+        # so it seems familiar with topological sort and these pairs are indexes and K letters are vertices
+        # So first create a string of our own alphabets
+        # then we will create a hashmap with K letters and their index, which will be easy to operate graph
+
+
+        # now if its topological sort, we will need to create an adjecent list
+        # so we will traverse in this alien dictionary and compare the words
+        # now when the word letters are not same then first word letter will have higher priority in sort
+        # eg for abcd and abca, d and a are diff but abcd is earlier in list so d-->a like this create adj list
+        # then you can use dfs or bfs.
+
+        alphabets="abcdefghijklmnopqrstuvwxyz"
+        hashmap=dict()
+        adj=[[]for _ in range(K)]
+
+        for i in range(K):
+            hashmap[alphabets[i]]=i
+        
+        # print(hashmap)
+        
+        for word in range(1,N):
+            letter, maxlen= 0, min(len(alien_dict[word-1]),len(alien_dict[word]))
+
+            while letter<maxlen:
+                if alien_dict[word-1][letter]!=alien_dict[word][letter]:
+                    adj[hashmap[alien_dict[word-1][letter]]].append(hashmap[alien_dict[word][letter]])
+                    break
+                letter+=1
+        
+        # print(adj)
+
+        bfs=[] # list to store the topological sort of indexs
+        q=deque()
+
+        indegree=[0]*K
+        
+        # populate the indegree
+        for v in range(K):
+            for item in adj[v]:
+                indegree[item]+=1
+        
+        # get zero indegree nodes
+        for v in range(K):
+            if indegree[v]==0:
+                q.append(v)
+        
+        # start bfs loop
+        while q:
+            node = q.popleft()
+            bfs.append(node)
+            for item in adj[node]:
+                indegree[item]-=1
+
+                if indegree[item]==0:
+                    q.append(item)
+
+        # print(bfs)
+
+        # convert the index into letters again
+        res=[]
+        for i in range(K):
+            res.append(alphabets[bfs[i]])
+
+        return res
+
+
+    # Shortest Path for Directed Acyclic Graph:
+    # https://practice.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1
+
+    def shortestPathDAG(self,n,m,edges):
+
+        # now if the graph is acyclic graph, to calculate shortest distance
+        # we will use TOPO Sort and after getting stack as in case of dfs, 
+        # we will traverse and get minimum value for each item
+        # ie compare existing dis value and value at current node + current wt
+        # return the array with each item having shortest distance, 
+        # if some item is non-rechable use -1
+
+        # first convert edges into adjecent list
+
+        adj=[[] for _ in range(n)]
+        for v,item, wt in edges:
+            adj[v].append([item,wt])
+
+        # now calculate the topo sort
+        def dfs(node):
+            vis.add(node)
+            for item in adj[node]:
+                it = item[0]
+                if it not in vis:
+                    dfs(it)
+            
+            stack.append(node)
+
+        vis=set()
+        stack=[]
+        for i in range(n):
+            if i not in vis:
+                dfs(i)
+
+
+        distArr=[float('inf')]*n
+
+        # distance from source to source is obviously zero
+        distArr[0]=0
+
+        while stack:
+            node=stack.pop()
+
+            for it,wt in adj[node]:
+                if distArr[it]>distArr[node]+wt:
+                    distArr[it]=distArr[node]+wt
+
+        
+
+        # if there are still dist unreachable ie infinity reset them to -1
+        for i in range(n):
+            if distArr[i]==float('inf'):
+                distArr[i]=-1
+        
+        return distArr
+
+
+
+
+
 
 V = 5
 adj = [[1, 2, 3], [], [4], [], []]
@@ -670,5 +928,15 @@ ans = Solution()
 #                                   [2, 3],
 #                                   [3, 0], ]))  # True
 
+# print(ans.detectCycleDirectedBFS(4,
+#                               [[0, 1],
+#                                [1, 2],
+#                                   [2, 3],
+#                                   [3, 0], ]))  # True
+
 # print(ans.safeStates(4,[[0, 1],[1, 2],[2, 0],[2,3],[3, 3]]))
-print(ans.TopologicalSort(V, adj))
+# print(ans.TopologicalSort(V, adj))
+# print(ans.topoLogicalSortBFS(V, adj))
+# print(ans.AlienDictionary(5,4 ,["baa","abcd","abca","cab","cad"]))
+print(ans.shortestPathDAG(6,7,[[0,1,2],[0,4,1],[4,5,4]
+,[4,2,2],[1,2,3],[2,3,6],[5,3,1]]))
