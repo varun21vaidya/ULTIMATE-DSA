@@ -1,9 +1,8 @@
 from collections import deque
 
-
 class Solution:
 
-    # Function to return Breadth First Traversal of given graph.
+    # * Function to return Breadth First Traversal of given graph.
 
     # SC: O(3N) ~ O(N) ie N (at max N nodes we are visiting) + N for visited + N for queue
     # TC: O(N)+ O(2E) = N number of iterations, for each node we are adding it to queue only once
@@ -49,62 +48,98 @@ class Solution:
 
         dfs = []
         vis = set()
-        return solver(0)
+        # Iterate over all nodes to ensure disconnected components are covered
+        for node in range(V):
+            if node not in vis:
+                solver(node)
+        
+        return dfs
 
 # --------------------------------------------------------------------------------
 
-    # Rotten Tomatoes
+    # * Rotten Tomatoes
     # https://practice.geeksforgeeks.org/problems/rotten-oranges2536/1
 
-    def rottenTomatoes(self, grid):
-        # we need to use BFS
-        time = 0
-        visited = dict()
-        q = deque([])
-        fresh = 0
-        m = len(grid)
-        n = len(grid[0])
+    # so here we need to traverse and convert all 1s to 2.
+    # So we need to start our traversal from all 2s at once, so use BFS
+    # but before bfs we need to append all cells of 2s in queue and then traverse
+    # on each queue loop will indicate each iteration
+    # now go to all 4 directions and only remaining are 1s so convert them and go to further 1s
+    # append these 1s in queue so you can move further in 4 directions from these positions
 
+
+    def orangesRotting(self, grid):
+        from collections import deque   
+        #Code here
+        q=deque([])
+        time=0
+        fresh =0 
+        m,n= len(grid), len(grid[0])
         for i in range(m):
             for j in range(n):
-                if grid[i][j] == 2:
-                    q.append([(i, j), time])
-                    visited[(i, j)] = 2
+                if grid[i][j]==2:
+                    q.append((i,j))
+                elif grid[i][j]==1:
+                    fresh+=1
 
-                else:
-                    visited[(i, j)] = 0
-
-                if grid[i][j] == 1:
-                    fresh += 1
-
-        # BFS
-
-        # 0 1 2
-        # 0 1 2
-        # 2 1 1
-        drow = [-1, 0, 1, 0]
-        dcol = [0, 1, 0, -1]
         while q:
-            [(i, j), t] = q.popleft()
-            time = max(time, t)
+            if fresh==0:
+                return time
+            time+=1
+            for _ in range(len(q)):
+                i,j = q.popleft()
+                for dr, dc in [(-1,0),(1,0), (0,1),(0,-1)]:
+                    row,col = dr+i, dc+j
+                    if row>=0 and col>=0 and row<m and col<n and grid[row][col]==1:
+                        fresh-=1
+                        grid[row][col]=2
+                        q.append((row,col))
+        return time if fresh == 0 else -1
+	    
+    # but changing the input is not recommanded so we will use a dictionary to store visited cells
 
-            for d in range(4):
-                row, col = i+drow[d], j+dcol[d]
+    def orangesRotting2(self, grid):
+        from collections import deque   
+        #Code here
+        q=deque([])
+        seen = dict()
+        time=0
+        fresh =0 
+        m,n= len(grid), len(grid[0])
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j]==2:
+                    seen[(i,j)]=2
+                    q.append((i,j))
+                else:
+                    seen[(i,j)]=0
+                if grid[i][j]==1:
+                    fresh+=1
+		            
 
-                if row >= 0 and row < m and col >= 0 and col < n:
-                    if grid[row][col] == 1 and visited[(row, col)] == 0:
-                        visited[(row, col)] = 2
-                        q.append([(row, col), time+1])
-                        fresh -= 1
-
-        if fresh > 0:
-            return -1
-        return time
+        while q:
+            if fresh==0:
+                return time
+            time+=1
+            for _ in range(len(q)):
+                i,j = q.popleft()
+                for dr, dc in [(-1,0),(1,0), (0,1),(0,-1)]:
+                    row,col = dr+i, dc+j
+                    if row>=0 and col>=0 and row<m and col<n and grid[row][col]==1 and seen[(row,col)]==0:
+                        fresh-=1
+                        seen[(row,col)]=2
+                        q.append((row,col))
+        return time if fresh == 0 else -1
 
 # --------------------------------------------------------------------------------
 
-    # # Detect A Cycle
+    # * Detect A Cycle
     # # Problem Link: https://practice.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1
+
+    # Explanation: 
+    # So first we would traverse either dfs or bfs but while doing that we may come across already gone through paths
+    # so we use visited hashset but now for elements where the dfs was started if it come to that it will indicate wrong cycle
+    # better maintain a current node and source node, now if both are different and the node is already visited then its a cycle
 
     # # BFS: level order traversal
     # # Traverse from different directions and if we reach a node
@@ -182,7 +217,7 @@ class Solution:
 
 # --------------------------------------------------------------------------------
 
-    # Number of Provinces
+    # * Number of Provinces
     # https://practice.geeksforgeeks.org/problems/number-of-provinces/1
 
     # so we need to traverse through the matrix and find the number of non connected items
@@ -208,7 +243,7 @@ class Solution:
 
 # --------------------------------------------------------------------------------
 
-    # # Number of Islands:
+    # * Number of Islands:
     # # https://practice.geeksforgeeks.org/problems/find-the-number-of-islands/1
 
     def numIslands(self, grid):
@@ -247,7 +282,7 @@ class Solution:
 
 # --------------------------------------------------------------------------------
 
-    # NUMBER OF DISTINCT ISLANDS:
+    # * NUMBER OF DISTINCT ISLANDS:
     # https://practice.geeksforgeeks.org/problems/number-of-distinct-islands/1
 
     def distinctIslands(self, grid):
@@ -288,7 +323,7 @@ class Solution:
 
 # --------------------------------------------------------------------------------
 
-    # # Flood Fill Algorithm
+    # * Flood Fill Algorithm
     # # https://practice.geeksforgeeks.org/problems/flood-fill-algorithm1856/1
 
     # TC : N*M || SC: N*M
@@ -392,14 +427,14 @@ class Solution:
 
         return clone
 
-    # # Replace O's with X's
+    # * Replace O's with X's
     # # https://practice.geeksforgeeks.org/problems/replace-os-with-xs0052/1
 
-    # now first we need to understand the problem, which states that we need to find
-    # the "O"s which are fully surrounded by "X" now it also means we need to skip
-    # those "O"s which are on boundry, so from our Jugaad we will find Ulta Solution
-    # we will find the "O"s on the boundry store them in visited and then convert those
-    # "O"s which are not in visited set.
+#     # now first we need to understand the problem, which states that we need to find
+#     # the "O"s which are fully surrounded by "X" now it also means we need to skip
+#     # those "O"s which are on boundry, so from our Jugaad we will find Ulta Solution
+#     # we will find the "O"s on the boundry store them in visited and then convert those
+#     # "O"s which are not in visited set.
 
     def fillOwithX(self, mat):
         drow = [-1, 0, 1, 0]
@@ -408,8 +443,9 @@ class Solution:
         n = len(mat[0])
         vis = set()
 
-        # dfs which traverses from boundry and marks those Os which are adjecent to boundry
-        # ie these are not eligible to converted
+        # # dfs which traverses from boundry and marks those Os which are adjecent to boundry
+        # # ie these are not eligible to converted
+
         def dfs(r, c, vis):
             vis.add((r, c))
             for d in range(4):
@@ -434,10 +470,9 @@ class Solution:
 
         return mat
 
-    # # Bipertite Graph:
+    # * Bipertite Graph:
     # # https://practice.geeksforgeeks.org/problems/bipartite-graph/1
-
-    # Bipertite graph is a graph with 2 colors such that no two adjecent nodes have same color
+    # # Bipertite graph is a graph with 2 colors such that no two adjecent nodes have same color
 
     def bipertite(self, V, adj):
 
@@ -488,7 +523,7 @@ class Solution:
 
         return True
 
-    # # Dectect a Cycle for Directed Graph
+    # * Dectect a Cycle for Directed Graph
     # # https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
 
         # to find if graph has cycle or not for undirected we have used to just check if it was visited or not
@@ -536,7 +571,7 @@ class Solution:
 
         return False
 
-    # --------------------------------------
+    # -------------------------------------
 
         # #  BFS METHOD: KAHN's Algorithm
 
@@ -575,7 +610,7 @@ class Solution:
 
     # ---------------------------------------------
 
-    # # Topological Sort:
+    # * Topological Sort:
 
     # # https://practice.geeksforgeeks.org/problems/topological-sort/1
 
@@ -625,7 +660,7 @@ class Solution:
 
     # -----------------------------------------------------------------------
 
-    # # KAHN's Algorithm (TOPOLOGICAL SORT BFS)
+    # * KAHN's Algorithm (TOPOLOGICAL SORT BFS)
 
     # Approach:
     # bfs means a queue is necessary. Now to get the topological sort with BFS we need an Indegrees Array.
@@ -674,7 +709,7 @@ class Solution:
 
 # ---------------------------------------------------------------------------------------------------------
 
-    # # Eventual Safe States
+    # * Eventual Safe States
 
     # # https://practice.geeksforgeeks.org/problems/eventual-safe-states/1
 
@@ -763,10 +798,10 @@ class Solution:
 
 # # -------------------------------------------------------------------------------------------------
 
-#     Alien Dictionary
+#     * Alien Dictionary
 #     https://practice.geeksforgeeks.org/problems/alien-dictionary/1
 
-    def AlienDictionary(self,N,K,alien_dict):
+    def AlienDictionary(self, N, K, alien_dict):
 
         # if you observe that we have to decode the alien dictionary
         # by comparing with our letters, first K letters of our alphabetes are to be used
@@ -775,85 +810,85 @@ class Solution:
         # So first create a string of our own alphabets
         # then we will create a hashmap with K letters and their index, which will be easy to operate graph
 
-
         # now if its topological sort, we will need to create an adjecent list
         # so we will traverse in this alien dictionary and compare the words
         # now when the word letters are not same then first word letter will have higher priority in sort
         # eg for abcd and abca, d and a are diff but abcd is earlier in list so d-->a like this create adj list
         # then you can use dfs or bfs.
 
-        alphabets="abcdefghijklmnopqrstuvwxyz"
-        hashmap=dict()
-        adj=[[]for _ in range(K)]
+        alphabets = "abcdefghijklmnopqrstuvwxyz"
+        hashmap = dict()
+        adj = [[]for _ in range(K)]
 
         for i in range(K):
-            hashmap[alphabets[i]]=i
-        
-        # print(hashmap)
-        
-        for word in range(1,N):
-            letter, maxlen= 0, min(len(alien_dict[word-1]),len(alien_dict[word]))
+            hashmap[alphabets[i]] = i
 
-            while letter<maxlen:
-                if alien_dict[word-1][letter]!=alien_dict[word][letter]:
-                    adj[hashmap[alien_dict[word-1][letter]]].append(hashmap[alien_dict[word][letter]])
+        # print(hashmap)
+
+        for word in range(1, N):
+            letter, maxlen = 0, min(
+                len(alien_dict[word-1]), len(alien_dict[word]))
+
+            while letter < maxlen:
+                if alien_dict[word-1][letter] != alien_dict[word][letter]:
+                    adj[hashmap[alien_dict[word-1][letter]]
+                        ].append(hashmap[alien_dict[word][letter]])
                     break
-                letter+=1
-        
+                letter += 1
+
         # print(adj)
 
-        bfs=[] # list to store the topological sort of indexs
-        q=deque()
+        bfs = []  # list to store the topological sort of indexs
+        q = deque()
 
-        indegree=[0]*K
-        
+        indegree = [0]*K
+
         # populate the indegree
         for v in range(K):
             for item in adj[v]:
-                indegree[item]+=1
-        
+                indegree[item] += 1
+
         # get zero indegree nodes
         for v in range(K):
-            if indegree[v]==0:
+            if indegree[v] == 0:
                 q.append(v)
-        
+
         # start bfs loop
         while q:
             node = q.popleft()
             bfs.append(node)
             for item in adj[node]:
-                indegree[item]-=1
+                indegree[item] -= 1
 
-                if indegree[item]==0:
+                if indegree[item] == 0:
                     q.append(item)
 
         # print(bfs)
 
         # convert the index into letters again
-        res=[]
+        res = []
         for i in range(K):
             res.append(alphabets[bfs[i]])
 
         return res
 
-
-    # Shortest Path for Directed Acyclic Graph:
+    # * Shortest Path for Directed Acyclic Graph:
     # https://practice.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1
 
-    def shortestPathDAG(self,n,m,edges):
+    def shortestPathDAG(self, n, m, edges):
 
         # now if the graph is acyclic graph, to calculate shortest distance
-        # we will use TOPO Sort and after getting stack as in case of dfs, 
+        # we will use TOPO Sort and after getting stack as in case of dfs,
         # we will traverse and get minimum value for each item
         # ie compare existing dis value and value at current node + current wt
-        # return the array with each item having shortest distance, 
+        # return the array with each item having shortest distance,
         # if some item is non-rechable use -1
 
         # first convert edges into adjecent list
 
-        adj=[[] for _ in range(n)]
-        for v,item, wt in edges:
-            adj[v].append([item,wt])
+        adj = [[] for _ in range(n)]
+        for v, item, wt in edges:
+            adj[v].append([item, wt])
 
         # now calculate the topo sort
         def dfs(node):
@@ -862,51 +897,160 @@ class Solution:
                 it = item[0]
                 if it not in vis:
                     dfs(it)
-            
+
             stack.append(node)
 
-        vis=set()
-        stack=[]
+        vis = set()
+        stack = []
         for i in range(n):
             if i not in vis:
                 dfs(i)
 
-
-        distArr=[float('inf')]*n
+        distArr = [float('inf')]*n
 
         # distance from source to source is obviously zero
-        distArr[0]=0
+        distArr[0] = 0
 
         while stack:
-            node=stack.pop()
+            node = stack.pop()
 
-            for it,wt in adj[node]:
-                if distArr[it]>distArr[node]+wt:
-                    distArr[it]=distArr[node]+wt
-
-        
+            for it, wt in adj[node]:
+                if distArr[it] > distArr[node]+wt:
+                    distArr[it] = distArr[node]+wt
 
         # if there are still dist unreachable ie infinity reset them to -1
         for i in range(n):
-            if distArr[i]==float('inf'):
-                distArr[i]=-1
-        
+            if distArr[i] == float('inf'):
+                distArr[i] = -1
+
         return distArr
 
+    # * shortest path for Undirected Graph with unit weight:
+    # https://practice.geeksforgeeks.org/problems/shortest-path-in-undirected-graph-having-unit-distance/1
 
+    # for undirected graph we can just use bfs or dfs and and as its unit weight, we dont need to store the weight
 
+    def ShortestDistUndirected(self, n, m, edges, src):
 
+        adj = [[] for _ in range(n)]
+
+        for v, it in edges:
+            adj[it].append(v)
+            adj[v].append(it)
+
+        # # bfs
+        # q= deque([src])
+        # dist=[float('inf')]*n
+        # dist[src]=0
+
+        # while q:
+        #     node = q.popleft()
+        #     for item in adj[node]:
+
+        #         if dist[item]>dist[node]+1:
+        #             dist[item]=dist[node]+1
+        #             q.append(item)
+
+        # for i in range(n):
+        #     if dist[i]==float('inf'):
+        #         dist[i]=-1
+
+        # return dist
+
+        # with dfs
+        def dfs(node):
+            vis[node] = 1
+
+            for item in adj[node]:
+                if dist[item] > dist[node]+1:
+                    dist[item] = dist[node]+1
+                if vis[item] == 0:
+                    dfs(item)
+
+            vis[node] = 0  # IMP
+
+        vis = [0]*n
+        dist = [float('inf')]*n
+        dist[src] = 0
+
+        for i in range(n):
+            if vis[i] == 0:
+                dfs(i)
+
+        for i in range(n):
+            if dist[i] == float('inf'):
+                dist[i] = -1
+
+        return dist
+
+    # * WORD LADDER:
+    # https://practice.geeksforgeeks.org/problems/word-ladder/1
+
+    def wordLadder(self, startWord, targetWord, wordList):
+
+        wordlist = set(wordList)
+        q = deque()
+        q.append([startWord, 1])
+        alphabets = "abcdefghijklmnopqrstuvwxyz"
+
+        while q:
+
+            node, count = q.popleft()
+
+            if node == targetWord:
+                return count
+
+            for ind in range(len(node)):
+                for letter in alphabets:
+
+                    new = node[:ind]+letter+node[ind+1:]
+                    if new in wordlist:
+                        q.append([new, count+1])
+                        wordlist.discard(new)
+
+        return 0
+
+    # * Word ladder 2
+    # https://practice.geeksforgeeks.org/problems/word-ladder-ii/1
+    def wordLadder2(self, start, end, wordList):
+        wordlist = set(wordList)
+        q = deque()
+        q.append([start, [start]])
+        alphabets = "abcdefghijklmnopqrstuvwxyz"
+        res = []
+        while q:
+            temp = []
+            for _ in range(len(q)):
+                word, lst = q.popleft()
+
+                if word == end:
+                    res.append(lst)
+                    continue
+
+                for ind in range(len(word)):
+                    for letter in alphabets:
+                        new = word[:ind]+letter+word[ind+1:]
+                        if new in wordlist:
+                            temp.append(new)
+                            q.append([new, lst+[new]])
+
+            for newword in temp:
+                wordlist.discard(newword)
+
+        return res
 
 
 V = 5
 adj = [[1, 2, 3], [], [4], [], []]
+adj = {0:[1, 2, 3], 1:[], 2:[4], 3:[], 4:[]}
+
 
 
 ans = Solution()
 
 
 # for BFS TRAVERSAL
-# print(ans.bfsOfGraph(V, adj))  # [0, 1, 2, 3, 4]
+print(ans.bfsOfGraph(V, adj))  # [0, 1, 2, 3, 4]
 # print(ans.dfsOfGraph(V, adj))  # [0, 1, 2, 4, 3]
 # print(ans.rottenTomatoes([[2, 2, 0, 1]]))
 # print(ans.rottenTomatoes([[0, 1, 2], [0, 1, 2], [2, 1, 1]]))
@@ -938,5 +1082,11 @@ ans = Solution()
 # print(ans.TopologicalSort(V, adj))
 # print(ans.topoLogicalSortBFS(V, adj))
 # print(ans.AlienDictionary(5,4 ,["baa","abcd","abca","cab","cad"]))
-print(ans.shortestPathDAG(6,7,[[0,1,2],[0,4,1],[4,5,4]
-,[4,2,2],[1,2,3],[2,3,6],[5,3,1]]))
+# print(ans.shortestPathDAG(6,7,[[0,1,2],[0,4,1],[4,5,4]
+# ,[4,2,2],[1,2,3],[2,3,6],[5,3,1]]))
+# print(ans.ShortestDistUndirected(9, 10, [[0, 1], [0, 3], [3, 4], [
+#       4, 5], [5, 6], [1, 2], [2, 6], [6, 7], [7, 8], [6, 8]], 0))
+
+# print(ans.wordLadder("hit","cog",["hot","dot","dog","lot","log","cog"]))
+print(ans.wordLadder2("hit", "cog", [
+      "hot", "dot", "dog", "lot", "log", "cog"]))
