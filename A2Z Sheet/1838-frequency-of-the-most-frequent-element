@@ -1,0 +1,53 @@
+def maxFrequency(nums, k):
+
+    # # brute force:
+    # currK=0
+    # maxx_freq=0
+
+    # nums.sort()
+    # for targetIndex in range(len(nums)-1,-1,-1):
+    #     target=nums[targetIndex]
+    #     currK=k
+    #     currFreq=1
+    #     for i in range(targetIndex-1,-1,-1):
+    #         currK-=target-nums[i]
+    #         if currK>=0:
+    #             currFreq+=1
+    #         maxx_freq=max(maxx_freq,currFreq)
+    #         if currK<0:
+    #             break
+    # return maxx_freq
+
+    # optimize
+    # using sliding window 
+    # how do we make everything same as any number suppose last number?
+    # totalKNeeded = loop * lastnumber - each number from start to last number
+    # this is total that we would need to fullfill it
+    # so 1,4,8,13 ie 13-1=12, 13-4=9, 13-8=5 --> 12+9+5 =26 general
+    # instead we will use left and right pointers
+    # so we can take their (difference * right pointer value) - total upto right
+    # so 1,4,8,13 -> left at 1 index 0,  right at 13 index 3
+    # (3-0+1)*13 - 1+4+8+13 = 52-26 = 26 according to formula
+
+    nums.sort()
+    left=0
+    maxx_freq=0
+    totalCost=0
+    for right in range(len(nums)):
+        totalCost+=nums[right]
+        while  ((right-left+1)*nums[right]) - totalCost > k:
+            totalCost-=nums[left]
+            left+=1
+        
+        maxx_freq=max(maxx_freq,right-left+1)
+    
+    return maxx_freq
+        
+            
+    
+
+
+nums=[1,4,8,13]
+k =5
+print(maxFrequency(nums,k))
+
